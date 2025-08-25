@@ -1,102 +1,133 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Navigation } from "@/components/navigation";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-background">
+      <Navigation />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+      {/* Hero Section */}
+      <main>
+        <section className="container mx-auto px-4 py-20 text-center">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
+              Tic Tic Pou
+              <span className="text-primary block text-3xl md:text-4xl mt-2">com Classes</span>
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              O jogo de roda brasileiro que conquistou uma nova dimensão com classes únicas, 
+              sistema de ranking ELO e partidas oficiais registradas por embaixadores.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link 
+                href="/classes" 
+                className="bg-primary text-primary-foreground px-8 py-3 rounded-md text-lg font-medium hover:bg-primary/90 transition-colors"
+              >
+                Ver Classes
+              </Link>
+              <Link 
+                href="/auth/signup" 
+                className="border border-border px-8 py-3 rounded-md text-lg font-medium hover:bg-secondary transition-colors"
+              >
+                Cadastrar-se
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="container mx-auto px-4 py-20">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="bg-primary/10 p-6 rounded-lg mb-4 inline-block">
+                <div className="w-12 h-12 bg-primary rounded-md flex items-center justify-center text-primary-foreground font-bold text-xl">
+                  🎯
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Classes Únicas</h3>
+              <p className="text-muted-foreground">
+                Mais de 10 classes diferentes, cada uma com habilidades especiais que transformam a experiência do jogo tradicional.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="bg-primary/10 p-6 rounded-lg mb-4 inline-block">
+                <div className="w-12 h-12 bg-primary rounded-md flex items-center justify-center text-primary-foreground font-bold text-xl">
+                  🏆
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Ranking ELO</h3>
+              <p className="text-muted-foreground">
+                Sistema de pontuação profissional que acompanha seu desempenho ao longo do tempo nas partidas oficiais.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="bg-primary/10 p-6 rounded-lg mb-4 inline-block">
+                <div className="w-12 h-12 bg-primary rounded-md flex items-center justify-center text-primary-foreground font-bold text-xl">
+                  📊
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Partidas Oficiais</h3>
+              <p className="text-muted-foreground">
+                Registre suas partidas com embaixadores oficiais e acompanhe o histórico completo de jogos da comunidade.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Game Rules Preview */}
+        <section className="bg-muted/30 border-y border-border">
+          <div className="container mx-auto px-4 py-20">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl font-bold text-foreground mb-8">Como Jogar</h2>
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-card p-6 rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow">
+                  <h3 className="text-lg font-semibold mb-2 text-primary">Defender</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Cruze os braços em X no peito para se proteger de ataques
+                  </p>
+                </div>
+                <div className="bg-card p-6 rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow">
+                  <h3 className="text-lg font-semibold mb-2 text-primary">Recarregar</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Levante as mãos como armas e fale &quot;Tic Tic&quot; para ganhar uma bala
+                  </p>
+                </div>
+                <div className="bg-card p-6 rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow">
+                  <h3 className="text-lg font-semibold mb-2 text-primary">Atirar</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Aponte para um alvo e fale &quot;Pou!&quot; para atacar gastando uma bala
+                  </p>
+                </div>
+              </div>
+              <Link 
+                href="/classes" 
+                className="text-primary hover:text-primary/80 font-medium"
+              >
+                Conheça todas as classes e suas habilidades especiais →
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      {/* Footer */}
+      <footer className="border-t border-border py-12">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-muted-foreground mb-4">
+            Tic Tic Pou com Classes - Jogo criado colaborativamente pela comunidade brasileira
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Este trabalho está licenciado com uma{" "}
+            <a 
+              href="http://creativecommons.org/licenses/by-nc-sa/4.0/" 
+              className="text-primary hover:text-primary/80"
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              Licença Creative Commons - Atribuição-NãoComercial-CompartilhaIgual 4.0 Internacional
+            </a>
+          </p>
+        </div>
       </footer>
     </div>
   );
