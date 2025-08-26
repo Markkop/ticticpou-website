@@ -14,7 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Important**: Never build this project unless explicitly asked to do so. Always run lint and tsc and fix all issues.
 Note: sometimes you might already have a dev server running and even a Playwright MCP page open, so try to access those directly instead of starting a new dev server or opening a new Playwright MCP page.
-Note: avoid `any` and `unknown` types.
+Note: avoid `any` and `unknown` types. Everytime you see a type issue, don't try to fix the easy way. Investigate the issue and use that as an opportunity to improve the codebase by creating reusable types and functions.
 Note: we don't need backwards compatibility for anything in the database or types, unless explicitly asked so. So feel free to favor the latest requests and update types and database (with Neon MCP).
 
 ## Project Overview
