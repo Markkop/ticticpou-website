@@ -155,7 +155,7 @@ export const actions: ActionData[] = [
     name: 'Tiro Duplo',
     category: 'special',
     className: 'Cangaceiro',
-    description: 'Atira em dois alvos simultaneamente no mesmo turno ou em duas rodadas diferentes.'
+    description: 'Atira em dois alvos simultaneamente no mesmo turno ou em duas rodadas diferentes.',
     sound: 'Pou! ou PouPou',
     gesture: 'Mira com uma mão em cada alvo',
     requirements: ['Ter 2 balas carregadas'],

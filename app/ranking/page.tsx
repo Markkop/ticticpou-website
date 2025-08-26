@@ -1,21 +1,14 @@
-import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, Crown, Trophy, TrendingUp, Users } from 'lucide-react';
+import { Crown, Trophy, TrendingUp, Users, Target, Swords, Globe } from 'lucide-react';
 import { Navigation } from '@/components/navigation';
-import { usersService, statsService } from '@/lib/db/services';
-import type { User } from '@/lib/db';
-import RankingClient from './components/RankingClient';
+import { getRankingsByGameMode, type RankingEntry } from '@/lib/data/rankings';
+import RankingTabs from './components/RankingTabs';
 
-interface RankingUser extends User {
-  rank: number;
-  wins: number;
-  losses: number;
-  winRate: number;
-  change: string;
-}
-
-interface RankingPageProps {
-  users: RankingUser[];
+interface RankingPageData {
+  global: RankingEntry[];
+  classic4: RankingEntry[];
+  normal5: RankingEntry[];
+  free6Plus: RankingEntry[];
   stats: {
     totalPlayers: number;
     totalMatches: number;
@@ -24,22 +17,42 @@ interface RankingPageProps {
   };
 }
 
-function RankingPageComponent({ users, stats }: RankingPageProps) {
+async function fetchRankingData(): Promise<RankingPageData> {
+  const [global, classic4, normal5, free6Plus] = await Promise.all([
+    getRankingsByGameMode('global', 100),
+    getRankingsByGameMode('classic_4', 100),
+    getRankingsByGameMode('normal_5', 100),
+    getRankingsByGameMode('free_6plus', 100),
+  ]);
+
+  const totalPlayers = new Set([...global, ...classic4, ...normal5, ...free6Plus].map(r => r.userId)).size;
+  const totalMatches = global.reduce((sum, r) => sum + r.totalMatches, 0) / 2;
+  const averageElo = global.length > 0 
+    ? Math.round(global.reduce((sum, r) => sum + r.elo, 0) / global.length)
+    : 1000;
+
+  return {
+    global,
+    classic4,
+    normal5,
+    free6Plus,
+    stats: {
+      totalPlayers,
+      totalMatches: Math.round(totalMatches),
+      averageElo,
+      topClass: 'Assassino',
+    },
+  };
+}
+
+export default async function RankingPage() {
+  const data = await fetchRankingData();
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
 
       <main className="container mx-auto px-4 py-8">
-        {/* Back Button */}
-        <Link 
-          href="/" 
-          className="inline-flex items-center text-muted-foreground hover:text-foreground mb-8"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Voltar ao Início
-        </Link>
-
-        {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4">🏆 Ranking ELO</h1>
           <p className="text-lg text-muted-foreground">
@@ -47,41 +60,39 @@ function RankingPageComponent({ users, stats }: RankingPageProps) {
           </p>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card className="text-center shadow-sm">
             <CardContent className="p-4">
               <Users className="w-6 h-6 text-primary mx-auto mb-2" />
-              <div className="text-2xl font-bold text-foreground">{stats.totalPlayers}</div>
+              <div className="text-2xl font-bold text-foreground">{data.stats.totalPlayers}</div>
               <div className="text-sm text-muted-foreground">Jogadores</div>
             </CardContent>
           </Card>
           <Card className="text-center shadow-sm">
             <CardContent className="p-4">
               <Trophy className="w-6 h-6 text-primary mx-auto mb-2" />
-              <div className="text-2xl font-bold text-foreground">{stats.totalMatches}</div>
+              <div className="text-2xl font-bold text-foreground">{data.stats.totalMatches}</div>
               <div className="text-sm text-muted-foreground">Partidas</div>
             </CardContent>
           </Card>
           <Card className="text-center shadow-sm">
             <CardContent className="p-4">
               <TrendingUp className="w-6 h-6 text-primary mx-auto mb-2" />
-              <div className="text-2xl font-bold text-foreground">{stats.averageElo}</div>
+              <div className="text-2xl font-bold text-foreground">{data.stats.averageElo}</div>
               <div className="text-sm text-muted-foreground">ELO Médio</div>
             </CardContent>
           </Card>
           <Card className="text-center shadow-sm">
             <CardContent className="p-4">
               <Crown className="w-6 h-6 text-primary mx-auto mb-2" />
-              <div className="text-2xl font-bold text-foreground">{stats.topClass}</div>
+              <div className="text-2xl font-bold text-foreground">{data.stats.topClass}</div>
               <div className="text-sm text-muted-foreground">Classe Top</div>
             </CardContent>
           </Card>
         </div>
 
-        <RankingClient users={users} />
+        <RankingTabs rankings={data} />
 
-        {/* ELO Explanation */}
         <div className="mt-8 bg-card border border-border rounded-lg p-6 shadow-sm">
           <h3 className="text-xl font-semibold text-card-foreground mb-4">📊 Como funciona o ELO</h3>
           <div className="grid md:grid-cols-2 gap-6">
@@ -91,7 +102,25 @@ function RankingPageComponent({ users, stats }: RankingPageProps) {
                 <li>• Todos começam com 1000 pontos</li>
                 <li>• Ganha pontos ao vencer partidas oficiais</li>
                 <li>• Perde pontos ao ser derrotado</li>
+                <li>• Bônus de +3 pontos por eliminação</li>
                 <li>• Variação baseada na diferença de ELO dos oponentes</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-medium mb-2 text-primary">Modos de Jogo</h4>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <Target className="w-4 h-4" />
+                  <span><strong>Clássico</strong> - 4 jogadores</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Swords className="w-4 h-4" />
+                  <span><strong>Normal</strong> - 5 jogadores (com Assassino)</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Globe className="w-4 h-4" />
+                  <span><strong>Livre</strong> - 6+ jogadores</span>
+                </li>
               </ul>
             </div>
             <div>
@@ -119,6 +148,14 @@ function RankingPageComponent({ users, stats }: RankingPageProps) {
                 </li>
               </ul>
             </div>
+            <div>
+              <h4 className="font-medium mb-2 text-primary">Ranking Global</h4>
+              <p className="text-sm text-muted-foreground">
+                O ranking global considera o desempenho em todos os modos de jogo, 
+                calculando uma média ponderada baseada no número de partidas em cada modo.
+                Eliminar oponentes concede bônus de ELO adicionais.
+              </p>
+            </div>
           </div>
         </div>
       </main>
@@ -126,37 +163,9 @@ function RankingPageComponent({ users, stats }: RankingPageProps) {
   );
 }
 
-export async function generateStaticParams() {
-  return [];
-}
-
 export async function generateMetadata() {
   return {
     title: 'Ranking ELO - Tic Tic Pou',
     description: 'Rankings oficiais baseados em partidas registradas por embaixadores'
   };
-}
-
-export default async function RankingServerPage() {
-  const [rankingUsers, globalStats] = await Promise.all([
-    usersService.getRanking(100),
-    statsService.getGlobalStats()
-  ]);
-
-  // Get user stats for each user
-  const usersWithStats = await Promise.all(
-    rankingUsers.map(async (user, index) => {
-      const userStats = await statsService.getUserStats(user.id);
-      return {
-        ...user,
-        rank: index + 1,
-        wins: userStats.wins,
-        losses: userStats.losses,
-        winRate: userStats.winRate,
-        change: '+0' // TODO: Calculate actual ELO change
-      };
-    })
-  );
-
-  return <RankingPageComponent users={usersWithStats} stats={globalStats} />;
 }

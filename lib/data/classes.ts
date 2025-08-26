@@ -86,7 +86,7 @@ export const classes: ClassData[] = [
     id: 'cangaceiro',
     name: 'Cangaceiro',
     category: 'base',
-    description: 'Única classe que pode ter duas balas, podendo atirar duas vezes em rodadas diferentes ou em dois alvos no mesmo turno.'
+    description: 'Única classe que pode ter duas balas, podendo atirar duas vezes em rodadas diferentes ou em dois alvos no mesmo turno.',
     specialLoadSound: undefined,
     specialUseSound: 'Pou! ou PouPou',
     specialLoadGesture: 'Recarregar normalmente duas vezes',

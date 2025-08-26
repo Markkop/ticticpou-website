@@ -21,7 +21,7 @@ export const users = pgTable('users', {
 export const matches = pgTable('matches', {
   id: uuid('id').defaultRandom().primaryKey(),
   ambassadorId: text('ambassador_id').references(() => users.id).notNull(),
-  gameMode: text('game_mode').notNull(),
+  gameMode: text('game_mode').notNull(), // 'classic_4', 'normal_5', 'free_6plus'
   location: text('location'),
   playedAt: timestamp('played_at').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -34,6 +34,7 @@ export const matchParticipants = pgTable('match_participants', {
   className: text('class_name').notNull(),
   placement: integer('placement').notNull(),
   isWinner: boolean('is_winner').default(false).notNull(),
+  eliminations: integer('eliminations').default(0).notNull(), // Number of players eliminated by this participant
   eloBefore: integer('elo_before').notNull(),
   eloAfter: integer('elo_after').notNull(),
   eloChange: integer('elo_change').notNull(),
