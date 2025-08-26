@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import type { GameMode, ParticipantSlot } from '@/lib/types/match';
 import type { UserSummary } from '@/lib/types/user';
 
-const QrReader = dynamic(() => import('react-qr-reader').then((mod) => mod.QrReader), { 
+const BarcodeScanner = dynamic(() => import('react-qr-barcode-scanner'), { 
   ssr: false 
 });
 
@@ -128,7 +128,12 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
     setSearchResults([]);
   };
 
-  const handleQrScan = (result: unknown) => {
+  const handleQrScan = (error: unknown, result: unknown) => {
+    if (error) {
+      console.info('QR scan error:', error);
+      return;
+    }
+    
     if (result && typeof result === 'object' && 'text' in result && result.text && scanningSlot !== null) {
       try {
         const userData = JSON.parse(result.text as string);
@@ -470,9 +475,11 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
                 </Button>
               </div>
               <div className="aspect-square max-w-xs mx-auto">
-                <QrReader
-                  onResult={handleQrScan}
-                  constraints={{ facingMode: 'environment' }}
+                <BarcodeScanner
+                  width={300}
+                  height={300}
+                  onUpdate={handleQrScan}
+                  facingMode="environment"
                 />
               </div>
             </div>

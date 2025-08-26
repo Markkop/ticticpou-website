@@ -26,7 +26,7 @@ export default function QRCodeModal({ isOpen, onClose, userData }: QRCodeModalPr
     try {
       const qrData = JSON.stringify({
         userId: userData.userId,
-        username: userData.username,
+        displayName: userData.username,
         avatarUrl: userData.avatarUrl,
       });
 
@@ -70,7 +70,7 @@ export default function QRCodeModal({ isOpen, onClose, userData }: QRCodeModalPr
     try {
       const qrData = JSON.stringify({
         userId: userData.userId,
-        username: userData.username,
+        displayName: userData.username,
         avatarUrl: userData.avatarUrl,
       });
       
