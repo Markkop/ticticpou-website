@@ -29,7 +29,7 @@ export async function searchUsers(query: string) {
   }
 }
 
-export async function getUserById(userId: number) {
+export async function getUserById(userId: string) {
   try {
     const result = await db
       .select()

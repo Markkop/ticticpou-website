@@ -6,7 +6,7 @@ import { desc, eq, and, sql } from 'drizzle-orm';
 import { type GameMode } from '@/lib/elo';
 
 export interface RankingEntry {
-  userId: number;
+  userId: string;
   userPublicId: string;
   displayName: string;
   avatarUrl: string | null;
@@ -139,7 +139,7 @@ export async function getRankingsByGameMode(
 }
 
 export async function getUserRankingStats(
-  userId: number,
+  userId: string,
   gameMode: GameMode | 'global'
 ): Promise<RankingEntry | null> {
   try {

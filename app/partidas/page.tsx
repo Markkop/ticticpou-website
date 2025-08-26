@@ -15,11 +15,13 @@ interface Match {
   createdAt: Date;
   ambassador: {
     id: string;
-    username: string;
+    publicId: string;
+    displayName: string;
   } | null;
   participants?: {
     userId: string;
-    username: string | null;
+    userPublicId: string | null;
+    displayName: string | null;
     avatarUrl: string | null;
     className: string;
     placement: number;
@@ -34,7 +36,7 @@ interface MatchesPageProps {
   matches: Match[];
   currentUserData?: {
     id: string;
-    username: string;
+    displayName: string;
     isAmbassador: boolean;
     role: 'user' | 'ambassador' | 'super-admin';
   } | null;
@@ -146,7 +148,7 @@ export default async function MatchesServerPage() {
       if (dbUser) {
         currentUserData = {
           id: dbUser.id,
-          username: dbUser.username,
+          displayName: dbUser.displayName,
           isAmbassador: dbUser.isAmbassador,
           role: dbUser.role as 'user' | 'ambassador' | 'super-admin',
         };

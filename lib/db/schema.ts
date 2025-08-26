@@ -1,11 +1,12 @@
-import { pgTable, text, timestamp, integer, boolean, uuid, jsonb, decimal, serial } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, integer, boolean, uuid, jsonb, decimal } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
-  id: serial('id').primaryKey(), // Internal ID (auto-increment)
+  id: text('id').primaryKey(), // Internal ID (text, matches current DB)
   publicId: uuid('public_id').defaultRandom().unique().notNull(), // Public ID (UUID)
   stackId: text('stack_id').notNull().unique(), // Stack Auth ID
   email: text('email').notNull().unique(),
+  username: text('username').notNull(), // Keep for compatibility with current DB
   displayName: text('display_name').notNull(), // Database display name
   avatarUrl: text('avatar_url'), // Database avatar URL
   favoriteClass: text('favorite_class'),
@@ -15,13 +16,14 @@ export const users = pgTable('users', {
   losses: integer('losses').default(0).notNull(),
   isAmbassador: boolean('is_ambassador').default(false).notNull(),
   role: text('role').default('user').notNull(), // 'user', 'ambassador', 'super-admin'
+  tempId: integer('temp_id').notNull(), // From migration
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 export const matches = pgTable('matches', {
   id: uuid('id').defaultRandom().primaryKey(),
-  ambassadorId: integer('ambassador_id').references(() => users.id).notNull(),
+  ambassadorId: text('ambassador_id').references(() => users.id).notNull(),
   gameMode: text('game_mode').notNull(), // 'classic_4', 'normal_5', 'free_6plus'
   location: text('location'),
   playedAt: timestamp('played_at').notNull(),
@@ -31,7 +33,7 @@ export const matches = pgTable('matches', {
 export const matchParticipants = pgTable('match_participants', {
   id: uuid('id').defaultRandom().primaryKey(),
   matchId: uuid('match_id').references(() => matches.id, { onDelete: 'cascade' }).notNull(),
-  userId: integer('user_id').references(() => users.id).notNull(),
+  userId: text('user_id').references(() => users.id).notNull(),
   className: text('class_name').notNull(),
   placement: integer('placement').notNull(),
   isWinner: boolean('is_winner').default(false).notNull(),

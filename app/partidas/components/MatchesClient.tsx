@@ -11,7 +11,8 @@ import MatchEditor from './MatchEditor';
 
 interface MatchParticipant {
   userId: string;
-  username: string | null;
+  userPublicId: string | null;
+  displayName: string | null;
   avatarUrl: string | null;
   className: string;
   placement: number;
@@ -30,14 +31,15 @@ interface Match {
   createdAt: Date;
   ambassador: {
     id: string;
-    username: string;
+    publicId: string;
+    displayName: string;
   } | null;
   participants?: MatchParticipant[];
 }
 
 interface UserData {
   id: string;
-  username: string;
+  displayName: string;
   isAmbassador: boolean;
   role: 'user' | 'ambassador' | 'super-admin';
 }
@@ -92,10 +94,10 @@ function MatchRow({ match, canEdit, onEdit }: { match: Match; canEdit: boolean; 
                 <div className="text-center min-w-[120px]">
                   <div className="text-xs text-muted-foreground mb-1">EMBAIXADOR</div>
                   <div className="font-medium text-foreground">
-                    {match.ambassador?.username || 'N/A'}
+                    {match.ambassador?.displayName || 'N/A'}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    @{match.ambassador?.username || 'N/A'}
+                    @{match.ambassador?.displayName || 'N/A'}
                   </div>
                 </div>
               </div>
@@ -150,11 +152,11 @@ function MatchRow({ match, canEdit, onEdit }: { match: Match; canEdit: boolean; 
                           </span>
                           <Avatar className="w-10 h-10 border-2 border-primary">
                             <AvatarImage src={participant.avatarUrl || undefined} />
-                            <AvatarFallback>{participant.username?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
+                            <AvatarFallback>{participant.displayName?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
                           </Avatar>
                           <div>
                             <div className="font-medium flex items-center gap-2">
-                              {participant.username || 'Usuário desconhecido'}
+                              {participant.displayName || 'Usuário desconhecido'}
                               {participant.isWinner && <Trophy className="w-4 h-4 text-yellow-500" />}
                             </div>
                             <div className="text-sm text-muted-foreground">{participant.className}</div>
@@ -219,7 +221,7 @@ export default function MatchesClient({ matches, currentUserData }: MatchesClien
     const matchesSearch = searchTerm === '' || 
       match.gameMode.toLowerCase().includes(searchTerm.toLowerCase()) ||
       match.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      match.ambassador?.username.toLowerCase().includes(searchTerm.toLowerCase());
+      match.ambassador?.displayName.toLowerCase().includes(searchTerm.toLowerCase());
       
     const matchesMode = filterMode === 'all' || match.gameMode === filterMode;
     
@@ -250,7 +252,7 @@ export default function MatchesClient({ matches, currentUserData }: MatchesClien
         <div className="mb-6">
           <MatchEditor
             ambassadorId={currentUserData.id}
-            ambassadorName={currentUserData.username}
+            ambassadorName={currentUserData.displayName}
             existingMatch={editingMatch ? {
               id: editingMatch.id,
               gameMode: editingMatch.gameMode as 'classic_4' | 'normal_5' | 'free_6plus',
@@ -258,7 +260,7 @@ export default function MatchesClient({ matches, currentUserData }: MatchesClien
               playedAt: editingMatch.playedAt,
               participants: editingMatch.participants?.map(p => ({
                 userId: p.userId,
-                username: p.username || undefined,
+                displayName: p.displayName || undefined,
                 avatarUrl: p.avatarUrl || undefined,
                 className: p.className,
                 eliminations: p.eliminations,

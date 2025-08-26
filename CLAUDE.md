@@ -13,6 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm run tsc` - Run TypeScript compiler checks
 
 **Important**: Never build this project unless explicitly asked to do so. Always run lint and tsc and fix all issues.
+Note: sometimes you might already have a dev server running and even a Playwright MCP page open, so try to access those directly instead of starting a new dev server or opening a new Playwright MCP page.
 
 ## Project Overview
 
@@ -75,6 +76,7 @@ Based on the initial prompt in `instructions/initial-prompt.md`, the game is a B
 - Drizzle config in `drizzle.config.ts`
 - Run migrations with `npx drizzle-kit push` (check Drizzle docs for exact commands)
 - Connection configured via `DATABASE_URL` environment variable
+- Use Neon MCP to check tables, create/update tables and run queries.
 
 ### Styling
 - Tailwind CSS 4 configuration

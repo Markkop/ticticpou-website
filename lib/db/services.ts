@@ -68,7 +68,7 @@ export const usersService = {
     return await db.select().from(users).orderBy(desc(users.elo));
   },
 
-  async getById(id: number): Promise<User | undefined> {
+  async getById(id: string): Promise<User | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
     return result[0];
   },
@@ -107,9 +107,28 @@ export const usersService = {
   },
 
   async create(userData: Omit<User, 'id' | 'publicId' | 'createdAt' | 'updatedAt'>) {
-    const [result] = await db.insert(users).values({
-      ...userData
-    }).returning();
+    // Generate a unique text ID for the current schema
+    const uniqueId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Create explicit insert data for current database schema
+    const insertData = {
+      id: uniqueId,
+      stackId: userData.stackId,
+      email: userData.email,
+      username: userData.displayName || userData.email.split('@')[0] || 'user', // Map displayName to username
+      displayName: userData.displayName || userData.email.split('@')[0] || 'user',
+      avatarUrl: userData.avatarUrl,
+      favoriteClass: userData.favoriteClass,
+      favoriteGameMode: userData.favoriteGameMode,
+      elo: userData.elo,
+      wins: userData.wins,
+      losses: userData.losses,
+      isAmbassador: userData.isAmbassador,
+      role: userData.role,
+      tempId: userData.tempId,
+    };
+    
+    const [result] = await db.insert(users).values(insertData).returning();
     return result;
   }
 };
@@ -210,12 +229,12 @@ export const matchesService = {
   },
 
   async create(matchData: {
-    ambassadorId: number;
+    ambassadorId: string;
     gameMode: string;
     location?: string;
     playedAt: Date;
     participants: Array<{
-      userId: number;
+      userId: string;
       className: string;
       placement: number;
       isWinner: boolean;
@@ -306,7 +325,7 @@ export const statsService = {
     .orderBy(desc(count()));
   },
 
-  async getUserStats(userId: number) {
+  async getUserStats(userId: string) {
     const [wins, losses, totalMatches] = await Promise.all([
       db.select({ count: count() })
         .from(matchParticipants)

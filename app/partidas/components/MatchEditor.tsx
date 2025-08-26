@@ -20,8 +20,8 @@ type GameMode = 'classic_4' | 'normal_5' | 'free_6plus';
 
 interface ParticipantSlot {
   userId?: string;
-  username?: string;
-  avatarUrl?: string;
+  displayName?: string;
+  avatarUrl?: string | null;
   className?: string;
   eliminations: number;
   isWinner: boolean;
@@ -62,7 +62,7 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
   const [isScanning, setIsScanning] = useState(false);
   const [scanningSlot, setScanningSlot] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<{id: string; username: string; avatarUrl?: string}[]>([]);
+  const [searchResults, setSearchResults] = useState<{id: string; displayName: string; avatarUrl?: string | null}[]>([]);
   const [searchingSlot, setSearchingSlot] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -124,12 +124,12 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
     }
   }, [participants, searchQuery, handleSearch]);
 
-  const handleSelectUser = (slotIndex: number, user: {id: string; username: string; avatarUrl?: string}) => {
+  const handleSelectUser = (slotIndex: number, user: {id: string; displayName: string; avatarUrl?: string | null}) => {
     const newParticipants = [...participants];
     newParticipants[slotIndex] = {
       ...newParticipants[slotIndex],
       userId: user.id,
-      username: user.username,
+      displayName: user.displayName,
       avatarUrl: user.avatarUrl,
     };
     setParticipants(newParticipants);
@@ -138,14 +138,14 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
     setSearchResults([]);
   };
 
-  const handleQrScan = (result: {text: string} | null) => {
-    if (result && scanningSlot !== null) {
+  const handleQrScan = (result: { text: string } | null | undefined) => {
+    if (result?.text && scanningSlot !== null) {
       try {
         const userData = JSON.parse(result.text);
-        if (userData.userId && userData.username) {
+        if (userData.userId && userData.displayName) {
           handleSelectUser(scanningSlot, {
             id: userData.userId,
-            username: userData.username,
+            displayName: userData.displayName,
             avatarUrl: userData.avatarUrl,
           });
           
@@ -157,7 +157,7 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
             setScanningSlot(null);
           }
           
-          toast.success(`${userData.username} adicionado!`);
+          toast.success(`${userData.displayName} adicionado!`);
         }
       } catch (error) {
         console.error('Invalid QR code:', error);
@@ -423,11 +423,11 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
                   {participant.userId ? (
                     <>
                       <Avatar className="w-10 h-10 border-2 border-primary">
-                        <AvatarImage src={participant.avatarUrl} />
-                        <AvatarFallback>{participant.username?.[0]?.toUpperCase()}</AvatarFallback>
+                        <AvatarImage src={participant.avatarUrl || undefined} />
+                        <AvatarFallback>{participant.displayName?.[0]?.toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <div className="font-medium">{participant.username}</div>
+                        <div className="font-medium">{participant.displayName}</div>
                         <select
                           className="text-sm bg-transparent border rounded px-2 py-1 mt-1"
                           value={participant.className || ''}
@@ -467,10 +467,10 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
                                 onMouseDown={() => handleSelectUser(index, user)}
                               >
                                 <Avatar className="w-8 h-8">
-                                  <AvatarImage src={user.avatarUrl} />
-                                  <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+                                  <AvatarImage src={user.avatarUrl || undefined} />
+                                  <AvatarFallback>{user.displayName[0].toUpperCase()}</AvatarFallback>
                                 </Avatar>
-                                <span>{user.username}</span>
+                                <span>{user.displayName}</span>
                               </button>
                             ))
                           ) : (

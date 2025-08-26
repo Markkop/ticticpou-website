@@ -13,6 +13,7 @@ export default async function ProfilePage() {
     const newProfile = await usersService.create({
       stackId: user.id,
       email: user.primaryEmail || '',
+      username: user.displayName || user.primaryEmail?.split('@')[0] || `User ${Date.now()}`,
       displayName: user.displayName || user.primaryEmail?.split('@')[0] || `User ${Date.now()}`,
       avatarUrl: null,
       favoriteClass: null,
@@ -22,6 +23,7 @@ export default async function ProfilePage() {
       losses: 0,
       isAmbassador: false,
       role: 'user',
+      tempId: Math.floor(Math.random() * 1000000),
     });
     
     // Redirect to the new user's profile using their public ID
