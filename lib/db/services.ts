@@ -68,13 +68,18 @@ export const usersService = {
     return await db.select().from(users).orderBy(desc(users.elo));
   },
 
-  async getById(id: string): Promise<User | undefined> {
+  async getById(id: number): Promise<User | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
     return result[0];
   },
 
-  async getByUsername(username: string): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.username, username)).limit(1);
+  async getByPublicId(publicId: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.publicId, publicId)).limit(1);
+    return result[0];
+  },
+
+  async getByDisplayName(displayName: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.displayName, displayName)).limit(1);
     return result[0];
   },
 
@@ -87,19 +92,25 @@ export const usersService = {
     return result[0];
   },
 
-  async updateProfile(id: string, updates: Partial<Omit<User, 'id' | 'createdAt'>>) {
+  async updateProfile(publicId: string, updates: Partial<Omit<User, 'id' | 'publicId' | 'createdAt'>>) {
     return await db.update(users).set({
       ...updates,
       updatedAt: new Date()
-    }).where(eq(users.stackId, id));
+    }).where(eq(users.publicId, publicId));
   },
 
-  async create(userData: Omit<User, 'createdAt' | 'updatedAt'>) {
-    return await db.insert(users).values({
-      ...userData,
-      createdAt: new Date(),
+  async updateProfileByStackId(stackId: string, updates: Partial<Omit<User, 'id' | 'publicId' | 'stackId' | 'createdAt'>>) {
+    return await db.update(users).set({
+      ...updates,
       updatedAt: new Date()
+    }).where(eq(users.stackId, stackId));
+  },
+
+  async create(userData: Omit<User, 'id' | 'publicId' | 'createdAt' | 'updatedAt'>) {
+    const [result] = await db.insert(users).values({
+      ...userData
     }).returning();
+    return result;
   }
 };
 
@@ -115,7 +126,8 @@ export const matchesService = {
       createdAt: matches.createdAt,
       ambassador: {
         id: users.id,
-        username: users.username,
+        publicId: users.publicId,
+        displayName: users.displayName,
       }
     })
     .from(matches)
@@ -127,7 +139,8 @@ export const matchesService = {
       matchesData.map(async (match) => {
         const participants = await db.select({
           userId: matchParticipants.userId,
-          username: users.username,
+          userPublicId: users.publicId,
+          displayName: users.displayName,
           avatarUrl: users.avatarUrl,
           className: matchParticipants.className,
           placement: matchParticipants.placement,
@@ -160,7 +173,8 @@ export const matchesService = {
       playedAt: matches.playedAt,
       createdAt: matches.createdAt,
       ambassador: {
-        username: users.username,
+        publicId: users.publicId,
+        displayName: users.displayName,
       }
     })
     .from(matches)
@@ -180,7 +194,8 @@ export const matchesService = {
       eloAfter: matchParticipants.eloAfter,
       eloChange: matchParticipants.eloChange,
       user: {
-        username: users.username,
+        publicId: users.publicId,
+        displayName: users.displayName,
       }
     })
     .from(matchParticipants)
@@ -195,12 +210,12 @@ export const matchesService = {
   },
 
   async create(matchData: {
-    ambassadorId: string;
+    ambassadorId: number;
     gameMode: string;
     location?: string;
     playedAt: Date;
     participants: Array<{
-      userId: string;
+      userId: number;
       className: string;
       placement: number;
       isWinner: boolean;
@@ -291,7 +306,7 @@ export const statsService = {
     .orderBy(desc(count()));
   },
 
-  async getUserStats(userId: string) {
+  async getUserStats(userId: number) {
     const [wins, losses, totalMatches] = await Promise.all([
       db.select({ count: count() })
         .from(matchParticipants)

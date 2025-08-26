@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Heart, Gamepad2, Trophy, QrCode } from 'lucide-react';
@@ -12,15 +13,14 @@ import { UserButton } from '@stackframe/stack';
 import type { User as DbUser, Class, GameMode } from '@/lib/db';
 import QRCodeModal from './QRCodeModal';
 
-interface StackAuthUser {
-  id: string;
-  primaryEmail?: string | null;
-  displayName?: string | null;
-  profileImageUrl?: string | null;
+interface SafeUser {
+  publicId: string;
+  displayName: string;
+  avatarUrl?: string | null;
 }
 
 interface ProfileClientProps {
-  user: StackAuthUser;
+  user: SafeUser;
   userProfile: DbUser;
   classes: Class[];
   gameModes: GameMode[];
@@ -35,6 +35,8 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
   const [isLoading, setIsLoading] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
   const [formData, setFormData] = useState({
+    displayName: user.displayName || '',
+    avatarUrl: user.avatarUrl || '',
     favoriteClass: userProfile.favoriteClass || '',
     favoriteGameMode: userProfile.favoriteGameMode || ''
   });
@@ -48,7 +50,9 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: user.id,
+          publicId: user.publicId,
+          displayName: formData.displayName || null,
+          avatarUrl: formData.avatarUrl || null,
           favoriteClass: formData.favoriteClass || null,
           favoriteGameMode: formData.favoriteGameMode || null,
         }),
@@ -72,6 +76,8 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
 
   const handleCancel = () => {
     setFormData({
+      displayName: user.displayName || '',
+      avatarUrl: user.avatarUrl || '',
       favoriteClass: userProfile.favoriteClass || '',
       favoriteGameMode: userProfile.favoriteGameMode || ''
     });
@@ -85,9 +91,9 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center gap-6">
             {/* Avatar */}
-            {user.profileImageUrl ? (
+            {user.avatarUrl ? (
               <Image 
-                src={user.profileImageUrl} 
+                src={user.avatarUrl} 
                 alt={user.displayName || 'User avatar'}
                 width={80}
                 height={80}
@@ -95,7 +101,7 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
               />
             ) : (
               <div className="w-20 h-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold">
-                {user.displayName?.charAt(0).toUpperCase() || user.primaryEmail?.charAt(0).toUpperCase() || 'U'}
+                {user.displayName?.charAt(0).toUpperCase() || 'U'}
               </div>
             )}
             
@@ -104,10 +110,10 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-muted-foreground text-sm">RANK #{userRank}</span>
                 <h1 className="text-2xl font-bold text-foreground">
-                  {user.displayName || userProfile.username}
+                  {user.displayName}
                 </h1>
               </div>
-              <p className="text-muted-foreground">@{userProfile.username}</p>
+              <p className="text-muted-foreground">ID: {user.publicId}</p>
             </div>
 
             {/* Actions */}
@@ -167,9 +173,9 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
         isOpen={showQRModal}
         onClose={() => setShowQRModal(false)}
         userData={{
-          userId: userProfile.id,
-          username: userProfile.username,
-          avatarUrl: user.profileImageUrl || undefined,
+          userId: userProfile.publicId,
+          username: userProfile.displayName,
+          avatarUrl: user.avatarUrl || undefined,
         }}
       />
 
@@ -191,6 +197,47 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Display Name */}
+                <div>
+                  <Label className="flex items-center gap-2 mb-2">
+                    <User className="w-4 h-4" />
+                    Display Name
+                  </Label>
+                  {isEditing ? (
+                    <Input
+                      value={formData.displayName}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        displayName: e.target.value
+                      }))}
+                      placeholder="Enter your display name"
+                    />
+                  ) : (
+                    <div className="p-3 bg-muted rounded-md">
+                      {user.displayName}
+                    </div>
+                  )}
+                </div>
+
+                {/* Avatar URL */}
+                <div>
+                  <Label className="mb-2 block">Avatar URL</Label>
+                  {isEditing ? (
+                    <Input
+                      value={formData.avatarUrl}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        avatarUrl: e.target.value
+                      }))}
+                      placeholder="Enter avatar URL (optional)"
+                    />
+                  ) : (
+                    <div className="p-3 bg-muted rounded-md">
+                      {user.avatarUrl || 'No avatar URL'}
+                    </div>
+                  )}
+                </div>
+
                 {/* Favorite Class */}
                 <div>
                   <Label className="flex items-center gap-2 mb-2">

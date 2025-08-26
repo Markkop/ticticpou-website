@@ -50,7 +50,7 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
   return (
     <div className="space-y-2">
       {entries.map((entry) => (
-        <Link key={entry.userId} href={`/profile/${entry.username}`}>
+        <Link key={entry.userId} href={`/profile/${entry.userPublicId}`}>
           <Card className="hover:shadow-md transition-shadow cursor-pointer">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -60,10 +60,10 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
                   </div>
                   <Avatar>
                     <AvatarImage src={entry.avatarUrl || undefined} />
-                    <AvatarFallback>{entry.username[0]?.toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>{entry.displayName[0]?.toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="font-semibold text-foreground">{entry.username}</div>
+                    <div className="font-semibold text-foreground">{entry.displayName}</div>
                     <div className="text-sm text-muted-foreground">
                       {entry.wins}V / {entry.losses}D • {entry.winRate.toFixed(1)}% WR
                     </div>

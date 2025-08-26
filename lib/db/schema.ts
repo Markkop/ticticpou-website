@@ -1,12 +1,13 @@
-import { pgTable, text, timestamp, integer, boolean, uuid, jsonb, decimal } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, integer, boolean, uuid, jsonb, decimal, serial } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
-  id: text('id').primaryKey(), // Keep as TEXT to match current database
+  id: serial('id').primaryKey(), // Internal ID (auto-increment)
+  publicId: uuid('public_id').defaultRandom().unique().notNull(), // Public ID (UUID)
   stackId: text('stack_id').notNull().unique(), // Stack Auth ID
   email: text('email').notNull().unique(),
-  username: text('username').notNull().unique(),
-  avatarUrl: text('avatar_url'),
+  displayName: text('display_name').notNull(), // Database display name
+  avatarUrl: text('avatar_url'), // Database avatar URL
   favoriteClass: text('favorite_class'),
   favoriteGameMode: text('favorite_game_mode'),
   elo: integer('elo').default(1000).notNull(),
@@ -20,7 +21,7 @@ export const users = pgTable('users', {
 
 export const matches = pgTable('matches', {
   id: uuid('id').defaultRandom().primaryKey(),
-  ambassadorId: text('ambassador_id').references(() => users.id).notNull(),
+  ambassadorId: integer('ambassador_id').references(() => users.id).notNull(),
   gameMode: text('game_mode').notNull(), // 'classic_4', 'normal_5', 'free_6plus'
   location: text('location'),
   playedAt: timestamp('played_at').notNull(),
@@ -30,7 +31,7 @@ export const matches = pgTable('matches', {
 export const matchParticipants = pgTable('match_participants', {
   id: uuid('id').defaultRandom().primaryKey(),
   matchId: uuid('match_id').references(() => matches.id, { onDelete: 'cascade' }).notNull(),
-  userId: text('user_id').references(() => users.id).notNull(),
+  userId: integer('user_id').references(() => users.id).notNull(),
   className: text('class_name').notNull(),
   placement: integer('placement').notNull(),
   isWinner: boolean('is_winner').default(false).notNull(),

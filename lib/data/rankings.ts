@@ -6,8 +6,9 @@ import { desc, eq, and, sql } from 'drizzle-orm';
 import { type GameMode } from '@/lib/elo';
 
 export interface RankingEntry {
-  userId: string;
-  username: string;
+  userId: number;
+  userPublicId: string;
+  displayName: string;
   avatarUrl: string | null;
   elo: number;
   wins: number;
@@ -58,7 +59,8 @@ export async function getRankingsByGameMode(
         
         rankings.push({
           userId: user.id,
-          username: user.username,
+          userPublicId: user.publicId,
+          displayName: user.displayName,
           avatarUrl: user.avatarUrl,
           elo: user.elo,
           wins: user.wins,
@@ -114,7 +116,8 @@ export async function getRankingsByGameMode(
         
         return {
           userId: row.user.id,
-          username: row.user.username,
+          userPublicId: row.user.publicId,
+          displayName: row.user.displayName,
           avatarUrl: row.user.avatarUrl,
           elo: row.user.elo,
           wins,
@@ -136,7 +139,7 @@ export async function getRankingsByGameMode(
 }
 
 export async function getUserRankingStats(
-  userId: string,
+  userId: number,
   gameMode: GameMode | 'global'
 ): Promise<RankingEntry | null> {
   try {
@@ -171,7 +174,8 @@ export async function getUserRankingStats(
       
       return {
         userId: userData.id,
-        username: userData.username,
+        userPublicId: userData.publicId,
+        displayName: userData.displayName,
         avatarUrl: userData.avatarUrl,
         elo: userData.elo,
         wins: userData.wins,
@@ -224,7 +228,8 @@ export async function getUserRankingStats(
       
       return {
         userId: userData.id,
-        username: userData.username,
+        userPublicId: userData.publicId,
+        displayName: userData.displayName,
         avatarUrl: userData.avatarUrl,
         elo: userData.elo,
         wins,

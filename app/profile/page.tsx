@@ -10,11 +10,10 @@ export default async function ProfilePage() {
   
   if (!userProfile) {
     // Create basic profile if it doesn't exist
-    await usersService.create({
-      id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    const newProfile = await usersService.create({
       stackId: user.id,
       email: user.primaryEmail || '',
-      username: user.primaryEmail?.split('@')[0] || `user_${Date.now()}`,
+      displayName: user.displayName || user.primaryEmail?.split('@')[0] || `User ${Date.now()}`,
       avatarUrl: null,
       favoriteClass: null,
       favoriteGameMode: null,
@@ -24,8 +23,11 @@ export default async function ProfilePage() {
       isAmbassador: false,
       role: 'user',
     });
+    
+    // Redirect to the new user's profile using their public ID
+    redirect(`/profile/${newProfile.publicId}`);
   }
   
-  // Redirect to the user's own profile page
-  redirect(`/profile/${user.id}`);
+  // Redirect to the user's own profile page using their public ID
+  redirect(`/profile/${userProfile.publicId}`);
 }

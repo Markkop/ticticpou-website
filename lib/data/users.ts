@@ -9,13 +9,14 @@ export async function searchUsers(query: string) {
     const results = await db
       .select({
         id: users.id,
-        username: users.username,
+        publicId: users.publicId,
+        displayName: users.displayName,
         avatarUrl: users.avatarUrl,
       })
       .from(users)
       .where(
         or(
-          ilike(users.username, `%${query}%`),
+          ilike(users.displayName, `%${query}%`),
           ilike(users.email, `%${query}%`)
         )
       )
@@ -28,7 +29,7 @@ export async function searchUsers(query: string) {
   }
 }
 
-export async function getUserById(userId: string) {
+export async function getUserById(userId: number) {
   try {
     const result = await db
       .select()

@@ -25,7 +25,7 @@ async function fetchRankingData(): Promise<RankingPageData> {
     getRankingsByGameMode('free_6plus', 100),
   ]);
 
-  const totalPlayers = new Set([...global, ...classic4, ...normal5, ...free6Plus].map(r => r.userId)).size;
+  const totalPlayers = new Set([...global, ...classic4, ...normal5, ...free6Plus].map(r => r.userPublicId)).size;
   const totalMatches = global.reduce((sum, r) => sum + r.totalMatches, 0) / 2;
   const averageElo = global.length > 0 
     ? Math.round(global.reduce((sum, r) => sum + r.elo, 0) / global.length)

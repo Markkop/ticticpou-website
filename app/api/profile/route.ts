@@ -10,12 +10,25 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { favoriteClass, favoriteGameMode } = body;
+    const { publicId, favoriteClass, favoriteGameMode, displayName, avatarUrl } = body;
 
-    // Update user profile
-    await usersService.updateProfile(user.id, {
+    // Get current user's profile to verify ownership
+    const currentUserProfile = await usersService.findByStackId(user.id);
+    if (!currentUserProfile) {
+      return NextResponse.json({ error: 'User profile not found' }, { status: 404 });
+    }
+
+    // Verify that the user is updating their own profile
+    if (publicId && currentUserProfile.publicId !== publicId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Update user profile using Stack ID (since that's what we can verify)
+    await usersService.updateProfileByStackId(user.id, {
       favoriteClass,
-      favoriteGameMode
+      favoriteGameMode,
+      ...(displayName && { displayName }),
+      ...(avatarUrl !== undefined && { avatarUrl })
     });
 
     return NextResponse.json({ success: true });
