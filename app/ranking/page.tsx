@@ -1,6 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Crown, Trophy, TrendingUp, Users, Target, Swords, Globe } from 'lucide-react';
-import { Navigation } from '@/components/navigation';
 import { getRankingsByGameMode } from '@/lib/data/rankings';
 import type { RankingEntry } from '@/lib/types/user';
 import RankingTabs from './components/RankingTabs';
@@ -51,8 +50,6 @@ export default async function RankingPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
-
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4">🏆 Ranking ELO</h1>

@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { Navigation } from '@/components/navigation';
 import { gameModesService } from '@/lib/db/services';
 import type { GameMode } from '@/lib/db';
 import GameModesClient from './components/GameModesClient';
@@ -12,7 +11,6 @@ interface GameModesPageProps {
 function GameModesPageComponent({ gameModes }: GameModesPageProps) {
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
 
       <main className="container mx-auto px-4 py-8">
         {/* Back Button */}

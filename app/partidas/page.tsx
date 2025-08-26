@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { ArrowLeft, Users, MapPin, Trophy } from 'lucide-react';
-import { Navigation } from '@/components/navigation';
 import { matchesService } from '@/lib/db/services';
 import MatchesClient from './components/MatchesClient';
 import { stackServerApp } from '@/stack';
@@ -16,7 +15,6 @@ interface MatchesPageProps {
 function MatchesPageComponent({ matches, currentUserData }: MatchesPageProps) {
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
 
       <main className="container mx-auto px-4 py-8">
         {/* Back Button */}

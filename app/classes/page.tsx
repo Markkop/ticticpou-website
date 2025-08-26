@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import type { Class } from '@/lib/db';
-import { Navigation } from '@/components/navigation';
 import { classesService } from '@/lib/db/services';
 import ClassCard from './components/ClassCard';
 
@@ -16,8 +15,6 @@ function ClassesPageComponent({ classes }: ClassesPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
-
       <main className="container mx-auto px-4 py-8">
         {/* Back Button */}
         <Link 

@@ -1,6 +1,5 @@
 import { stackServerApp } from '@/stack';
 import { notFound } from 'next/navigation';
-import { Navigation } from '@/components/navigation';
 import ProfileClient from '../components/ProfileClient';
 import { usersService, classesService, gameModesService } from '@/lib/db/services';
 
@@ -50,7 +49,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
       <ProfileClient 
         user={safeUser}
         userProfile={targetUserProfile}
