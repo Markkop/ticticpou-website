@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
-import { X, QrCode, Download, Copy } from 'lucide-react';
+import { LoadingCard } from '@/components/ui/loading-spinner';
+import { Download, Copy } from 'lucide-react';
 import QRCode from 'qrcode';
 import { toast } from 'sonner';
 
@@ -82,77 +83,62 @@ export default function QRCodeModal({ isOpen, onClose, userData }: QRCodeModalPr
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-background">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <QrCode className="w-5 h-5" />
-            Código QR do Perfil
-          </CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    <Modal 
+      isOpen={isOpen} 
+      onClose={onClose}
+      title="Código QR do Perfil"
+      size="md"
+    >
+      <div className="space-y-4">
+        {isLoading ? (
+          <LoadingCard text="Gerando código QR..." />
+        ) : (
+          <>
+            <div className="flex flex-col items-center space-y-4">
+              <div className="bg-white p-4 rounded-lg border">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src={qrCodeUrl} 
+                  alt={`QR Code para ${userData.displayName}`}
+                  className="w-64 h-64"
+                />
+              </div>
+              
+              <div className="text-center">
+                <h3 className="font-semibold">{userData.displayName}</h3>
+                <p className="text-sm text-muted-foreground">
+                  Escaneie para adicionar em partidas
+                </p>
+              </div>
             </div>
-          ) : (
-            <>
-              <div className="flex flex-col items-center space-y-4">
-                <div className="bg-white p-4 rounded-lg border">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={qrCodeUrl} 
-                    alt={`QR Code para ${userData.displayName}`}
-                    className="w-64 h-64"
-                  />
-                </div>
-                
-                <div className="text-center">
-                  <h3 className="font-semibold">{userData.displayName}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Escaneie para adicionar em partidas
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={downloadQRCode}
-                  className="flex-1"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Baixar
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={copyToClipboard}
-                  className="flex-1"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copiar dados
-                </Button>
-              </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={downloadQRCode}
+                className="flex-1"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Baixar
+              </Button>
+              <Button
+                variant="outline"
+                onClick={copyToClipboard}
+                className="flex-1"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copiar dados
+              </Button>
+            </div>
 
-              <div className="text-xs text-muted-foreground text-center">
-                <p>Este código QR pode ser usado por embaixadores</p>
-                <p>para adicionar você rapidamente em partidas oficiais.</p>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+            <div className="text-xs text-muted-foreground text-center">
+              <p>Este código QR pode ser usado por embaixadores</p>
+              <p>para adicionar você rapidamente em partidas oficiais.</p>
+            </div>
+          </>
+        )}
+      </div>
+    </Modal>
   );
 }

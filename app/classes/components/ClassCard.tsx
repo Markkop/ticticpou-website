@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
+import { CategoryBadge } from '@/components/ui/category-badge';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { Class } from '@/lib/db';
 
@@ -14,27 +15,6 @@ interface ClassCardProps {
 export default function ClassCard({ classData }: ClassCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const getCategoryBadge = (category: string | null) => {
-    const styles: Record<string, string> = {
-      base: 'bg-primary/20 text-primary',
-      extra: 'bg-accent/20 text-accent-foreground',
-      team: 'bg-secondary/20 text-secondary-foreground'
-    };
-    
-    const labels: Record<string, string> = {
-      base: 'Base',
-      extra: 'Extra',
-      team: 'Equipe'
-    };
-
-    if (!category) return null;
-
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[category]}`}>
-        {labels[category]}
-      </span>
-    );
-  };
 
   return (
     <Card className="border-border bg-card hover:shadow-md transition-all duration-200 shadow-sm">
@@ -42,7 +22,7 @@ export default function ClassCard({ classData }: ClassCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <CardTitle className="text-xl text-card-foreground">{classData.name}</CardTitle>
-            {getCategoryBadge(classData.category)}
+            <CategoryBadge category={classData.category as 'base' | 'extra' | 'team' | null} />
           </div>
           {classData.maxBullets !== null && classData.maxBullets > 0 && (
             <div className="text-xs text-muted-foreground">
