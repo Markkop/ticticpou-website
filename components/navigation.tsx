@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { UserButton, useUser } from "@stackframe/stack";
+import { useUser } from "@stackframe/stack";
 
 export function Navigation() {
   const user = useUser();
@@ -30,7 +30,9 @@ export function Navigation() {
               Partidas
             </Link>
             {user ? (
-              <UserButton />
+              <Link href="/profile" className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium hover:bg-primary/90 transition-colors">
+                {user.displayName?.charAt(0).toUpperCase() || user.primaryEmail?.charAt(0).toUpperCase() || 'U'}
+              </Link>
             ) : (
               <Link href="/auth/signin" className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
                 Entrar

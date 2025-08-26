@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tic Tic Pou – Website
 
-## Getting Started
+A modern web platform for **Tic Tic Pou**, a Brazilian circle game where players choose character classes with unique abilities and battle in rhythmic rounds. This site showcases the game’s rules, classes, actions, and official match rankings while providing user profiles and authentication.
 
-First, run the development server:
+## ✨ Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Landing Page** – High-level overview of the game with dark orange/black theme.
+- **Classes Explorer** – Grid view of every class with expandable details.
+- **Actions Reference** – Searchable list of all in-game actions.
+- **Game Modes** – Documentation for every mode (Campaign, Team, Jo-Ken-Po, etc.).
+- **Official Matches** – Ambassadors can record matches; results feed the ELO-based ranking.
+- **Player Ranking** – Dynamic leaderboard driven by match data.
+- **Profiles** – Users can customise avatar, display name, favourite class & mode.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠 Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Layer            | Technology |
+| ---------------- | ---------- |
+| Framework        | Next.js 15 (App Router) |
+| Styling & UI     | Tailwind CSS v4 + Shadcn/ui |
+| Database         | Neon PostgreSQL (via Drizzle ORM) |
+| Auth             | Stack Auth (`@stackframe/stack`) |
+| Tooling          | pnpm, Turbopack, ESLint, TypeScript |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Quick Start
 
-## Learn More
+1. **Install dependencies**
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   pnpm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Configure environment variables**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   Copy `.env.example` (if present) to `.env.local` and fill in:
 
-## Deploy on Vercel
+   - `DATABASE_URL` – Neon connection string
+   - `NEXT_PUBLIC_STACK_PROJECT_ID`, `NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY`, `STACK_SECRET_SERVER_KEY` – credentials from Stack Auth
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Run the dev server**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   pnpm run dev
+   ```
+
+   The site will be available at http://localhost:3000.
+
+## 🧰 Development Helpers
+
+Leverage the following AI tools while working on this project:
+
+- **Playwright MCP** – browser testing automation.
+- **Neon MCP** – create projects, tables, and run queries.
+- **Claude Code** – boostrap big features, easy fixes
+- **Cursor** – for more fine-grained codebase changes
+
+---
+
+Built with ❤️ for the Tic Tic Pou community.

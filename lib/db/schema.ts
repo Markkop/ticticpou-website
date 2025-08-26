@@ -1,16 +1,17 @@
-import { pgTable, text, timestamp, integer, boolean, uuid, json, jsonb, decimal } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, integer, boolean, uuid, jsonb, decimal } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
-  id: text('id').primaryKey(), // Stack Auth ID
+  id: text('id').primaryKey(), // Keep as TEXT to match current database
+  stackId: text('stack_id').notNull().unique(), // Stack Auth ID
   email: text('email').notNull().unique(),
   username: text('username').notNull().unique(),
-  displayName: text('display_name').notNull(),
   avatarUrl: text('avatar_url'),
   favoriteClass: text('favorite_class'),
   favoriteGameMode: text('favorite_game_mode'),
-  interests: json('interests').$type<string[]>(),
   elo: integer('elo').default(1000).notNull(),
+  wins: integer('wins').default(0).notNull(),
+  losses: integer('losses').default(0).notNull(),
   isAmbassador: boolean('is_ambassador').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -69,6 +70,10 @@ export const actions = pgTable('actions', {
   gesture: text('gesture'),
   category: text('category').notNull(), // 'basic', 'special', 'finisher'
   className: text('class_name'), // If action is class-specific
+  requirements: jsonb('requirements').$type<string[]>(),
+  effects: jsonb('effects').$type<string[]>(),
+  interactions: jsonb('interactions').$type<string[]>(),
+  vulnerable: boolean('vulnerable').default(false),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -76,9 +81,13 @@ export const gameModes = pgTable('game_modes', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: text('name').unique().notNull(),
   description: text('description').notNull(),
-  rules: jsonb('rules').$type<Record<string, unknown>>(),
+  rules: jsonb('rules').$type<string[]>(),
   minPlayers: integer('min_players').default(3).notNull(),
   maxPlayers: integer('max_players'),
+  difficulty: text('difficulty').default('iniciante').notNull(),
+  category: text('category').default('classic').notNull(),
+  specialFeatures: jsonb('special_features').$type<string[]>(),
+  newClasses: jsonb('new_classes').$type<string[]>(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 

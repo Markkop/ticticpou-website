@@ -1,0 +1,493 @@
+import { db } from './index';
+import { classes, actions, gameModes } from './schema';
+import { v4 as uuidv4 } from 'uuid';
+
+// Seed data for classes
+const classesData = [
+  // Base Classes
+  {
+    id: uuidv4(),
+    name: 'Mago',
+    description: 'Pode carregar e usar uma explosão mágica que ataca todos os jogadores ao mesmo tempo.',
+    specialLoadSound: 'Abra',
+    specialUseSound: 'Kadabra!',
+    specialLoadGesture: 'Abre um livro figurativo com as mãos',
+    specialUseGesture: 'Faz como se uma explosão caísse dos céus',
+    interactions: [
+      'Se o Mago morrer durante o Kadabra, a explosão é anulada',
+      'Se dois Magos usarem explosão juntos, ambos morrem e ninguém mais é atacado',
+      'Kadabra ataca todos que não estiverem defendendo'
+    ],
+    isBaseClass: true,
+    category: 'base',
+    maxBullets: 1,
+  },
+  {
+    id: uuidv4(),
+    name: 'Samurai',
+    description: 'Classe defensiva que pode contra-atacar, refletindo qualquer ataque recebido.',
+    specialLoadSound: 'Uh!',
+    specialUseSound: 'Katchim!',
+    specialLoadGesture: 'Coloca as duas mãos do lado esquerdo da cintura como se segurasse uma espada',
+    specialUseGesture: 'Puxa a espada da cintura e golpeia o ar',
+    interactions: [
+      'Reflete qualquer ataque recebido de volta ao atacante',
+      'Se não for atacado, o carregamento é perdido',
+      'Contra apunhalada do Assassino, ambos continuam vivos mas gastam carregamentos',
+      'Pode refletir explosões do Mago, matando-o e anulando a explosão'
+    ],
+    isBaseClass: true,
+    category: 'base',
+    maxBullets: 1,
+  },
+  {
+    id: uuidv4(),
+    name: 'Padre',
+    description: 'Classe "late-game" que pode ganhar uma vida extra ao rezar duas vezes com sucesso.',
+    specialLoadSound: 'Ohh!',
+    specialUseSound: null,
+    specialLoadGesture: 'Junta as mãos como se estivesse rezando',
+    specialUseGesture: null,
+    interactions: [
+      'Precisa rezar duas vezes (não precisam ser seguidas) para ganhar vida extra',
+      'Pode ter no máximo 1 vida extra',
+      'Se perder a vida extra, pode rezar novamente para recuperá-la',
+      'Deve completar a segunda reza para ganhar a vida extra'
+    ],
+    isBaseClass: true,
+    category: 'base',
+    maxBullets: 1,
+  },
+  {
+    id: uuidv4(),
+    name: 'Cangaceiro',
+    description: 'Única classe que pode ter duas balas, podendo atirar duas vezes ou em dois alvos simultaneamente.',
+    specialLoadSound: null,
+    specialUseSound: 'Pou! ou PouPou',
+    specialLoadGesture: 'Recarregar normalmente duas vezes',
+    specialUseGesture: 'Pode mirar em dois alvos com cada mão',
+    interactions: [
+      'Pode atirar em duas pessoas ao mesmo tempo ou em duas rodadas diferentes',
+      'Para tiro duplo, mira com uma mão em cada alvo',
+      'Se um dos alvos for Samurai refletindo, o Cangaceiro morre mas o outro alvo ainda recebe o tiro'
+    ],
+    isBaseClass: true,
+    category: 'base',
+    maxBullets: 2,
+  },
+  // Extra Classes
+  {
+    id: uuidv4(),
+    name: 'Noviço',
+    description: 'Classe "café com leite" para iniciantes, que se defende automaticamente ao atirar.',
+    specialLoadSound: null,
+    specialUseSound: 'Pou!',
+    specialLoadGesture: null,
+    specialUseGesture: 'Atira com uma mão e cruza a outra como escudo',
+    interactions: [
+      'Ao atirar, automaticamente se defende',
+      'Só pode ser usado uma ou duas vezes no máximo',
+      'Vulnerável apenas enquanto recarrega'
+    ],
+    isBaseClass: false,
+    category: 'extra',
+    maxBullets: 1,
+  },
+  {
+    id: uuidv4(),
+    name: 'Assassino',
+    description: 'Única classe sem arma, possui apenas defesa e uma adaga para apunhalar jogadores ao lado.',
+    specialLoadSound: 'Fshh',
+    specialUseSound: 'Krek!',
+    specialLoadGesture: 'Afia a adaga',
+    specialUseGesture: 'Encosta a mão fechada no peito do alvo ao lado',
+    interactions: [
+      'Não pode usar Tic Tic ou Pou!',
+      'Apunhalada só mata quem estiver defendendo',
+      'Pode atacar apenas jogadores ao seu lado',
+      'Quando um jogador ao lado morre, o próximo vivo vira alvo',
+      'Em 1x1, recupera a arma (Tic Tic e Pou)'
+    ],
+    isBaseClass: false,
+    category: 'extra',
+    maxBullets: 0,
+  },
+  {
+    id: uuidv4(),
+    name: 'Ladrão',
+    description: 'Pode roubar carregamentos e balas de outros jogadores usando "Perdeu".',
+    specialLoadSound: null,
+    specialUseSound: 'Perdeu',
+    specialLoadGesture: null,
+    specialUseGesture: 'Faz como se estivesse pegando algo no ar',
+    interactions: [
+      'Rouba carregamentos de ações especiais de outros jogadores',
+      'Pode roubar balas durante Tic Tic',
+      'Contra Padre, apenas cancela a reza sem roubar',
+      'Não pode acumular ações especiais',
+      'Não pode usar "Perdeu" até usar a ação roubada'
+    ],
+    isBaseClass: false,
+    category: 'extra',
+    maxBullets: 1,
+  },
+  {
+    id: uuidv4(),
+    name: 'Kabalista',
+    description: 'Precisa fazer uma contagem regressiva de 5 turnos para ganhar o jogo.',
+    specialLoadSound: null,
+    specialUseSound: 'CINCO, QUATRO, TRÊS, DOIS, UM',
+    specialLoadGesture: null,
+    specialUseGesture: 'Mostra dedos correspondentes ao número falado',
+    interactions: [
+      'Não possui Tic Tic nem Pou',
+      'Deve contar de 5 até 1 para ganhar',
+      'Vulnerável durante toda a contagem',
+      'Se completar a contagem sem morrer, ganha automaticamente'
+    ],
+    isBaseClass: false,
+    category: 'extra',
+    maxBullets: 0,
+  },
+  {
+    id: uuidv4(),
+    name: 'Metamorfo',
+    description: 'Conceito de classe que pode mudar para outras classes durante a partida usando "gosma".',
+    specialLoadSound: null,
+    specialUseSound: 'Gosma',
+    specialLoadGesture: null,
+    specialUseGesture: 'Ação direcional de gosma',
+    interactions: [
+      'Não possui arma, apenas defesa e gosma',
+      'Se o alvo da gosma usar ação especial, Metamorfo vira daquela classe',
+      'Problemas com interação com Cangaceiro ainda sendo resolvidos'
+    ],
+    isBaseClass: false,
+    category: 'extra',
+    maxBullets: 0,
+  },
+  {
+    id: uuidv4(),
+    name: 'Pacificador',
+    description: 'Pode cancelar todas as ações da rodada e ganhar vida extra se salvar alguém.',
+    specialLoadSound: 'Prepara',
+    specialUseSound: 'Cancela!',
+    specialLoadGesture: 'Cruza os braços para o alto formando um X',
+    specialUseGesture: 'Descruza os braços como um juiz encerrando partida',
+    interactions: [
+      'Cancela todas as ações da rodada',
+      'Se salvar alguém da morte, ganha uma vida extra',
+      'Se for atacado durante o cancelamento, sua ação não ativa',
+      'Não pode cancelar duas vezes seguidas'
+    ],
+    isBaseClass: false,
+    category: 'extra',
+    maxBullets: 1,
+  },
+  // Team Classes
+  {
+    id: uuidv4(),
+    name: 'Paramédico',
+    description: 'Exclusivo para modo Em Equipe - pode reviver aliados mortos usando desfibrilador.',
+    specialLoadSound: 'Zzz',
+    specialUseSound: 'Contato!',
+    specialLoadGesture: 'Arrasta as mãos de punhos fechados preparando desfibrilador',
+    specialUseGesture: 'Encosta as mãos de punhos fechados em aliado morto',
+    interactions: [
+      'Só pode carregar se um aliado estiver morto',
+      'Um jogador só pode reviver uma vez',
+      'Exclusivo para modo Em Equipe'
+    ],
+    isBaseClass: false,
+    category: 'team',
+    maxBullets: 1,
+  },
+];
+
+// Seed data for actions
+const actionsData = [
+  // Basic Actions
+  {
+    id: uuidv4(),
+    name: 'Defender',
+    description: 'Ação defensiva básica que protege contra todos os ataques.',
+    sound: null,
+    gesture: 'Cruze os braços em X no peito',
+    category: 'basic',
+    className: null,
+  },
+  {
+    id: uuidv4(),
+    name: 'Recarregar',
+    description: 'Carrega uma bala para poder atirar.',
+    sound: 'Tic Tic',
+    gesture: 'Levante ambas as mãos como armas',
+    category: 'basic',
+    className: null,
+  },
+  {
+    id: uuidv4(),
+    name: 'Atirar',
+    description: 'Ataca um jogador específico gastando uma bala.',
+    sound: 'Pou!',
+    gesture: 'Aponte com as mãos para o alvo',
+    category: 'basic',
+    className: null,
+  },
+  // Special Actions
+  {
+    id: uuidv4(),
+    name: 'Abra',
+    description: 'Carrega a explosão mágica do Mago.',
+    sound: 'Abra',
+    gesture: 'Abre um livro figurativo com as mãos',
+    category: 'special',
+    className: 'Mago',
+  },
+  {
+    id: uuidv4(),
+    name: 'Kadabra',
+    description: 'Explosão que ataca todos os jogadores simultaneamente.',
+    sound: 'Kadabra!',
+    gesture: 'Faz como se uma explosão caísse dos céus',
+    category: 'special',
+    className: 'Mago',
+  },
+  {
+    id: uuidv4(),
+    name: 'Uh',
+    description: 'Carrega o contra-ataque do Samurai.',
+    sound: 'Uh!',
+    gesture: 'Coloca mãos do lado da cintura como se segurasse espada',
+    category: 'special',
+    className: 'Samurai',
+  },
+  {
+    id: uuidv4(),
+    name: 'Katchim',
+    description: 'Contra-ataque que reflete qualquer ataque recebido.',
+    sound: 'Katchim!',
+    gesture: 'Saca espada para o alto',
+    category: 'special',
+    className: 'Samurai',
+  },
+  {
+    id: uuidv4(),
+    name: 'Ohh (Rezar)',
+    description: 'Reza para ganhar vida extra após duas rezas bem-sucedidas.',
+    sound: 'Ohh!',
+    gesture: 'Junta as mãos como se estivesse rezando',
+    category: 'special',
+    className: 'Padre',
+  },
+  {
+    id: uuidv4(),
+    name: 'Tiro Duplo',
+    description: 'Atira em dois alvos simultaneamente ou em sequência.',
+    sound: 'Pou! ou PouPou',
+    gesture: 'Mira com uma mão em cada alvo',
+    category: 'special',
+    className: 'Cangaceiro',
+  },
+  {
+    id: uuidv4(),
+    name: 'Fshh (Afiar)',
+    description: 'Afia a adaga para poder apunhalar.',
+    sound: 'Fshh',
+    gesture: 'Movimentos de afiar a adaga',
+    category: 'special',
+    className: 'Assassino',
+  },
+  {
+    id: uuidv4(),
+    name: 'Krek (Apunhalar)',
+    description: 'Apunhala um jogador ao lado - só mata se estiver defendendo.',
+    sound: 'Krek!',
+    gesture: 'Encosta mão fechada no peito do alvo ao lado',
+    category: 'special',
+    className: 'Assassino',
+  },
+  {
+    id: uuidv4(),
+    name: 'Perdeu',
+    description: 'Rouba carregamentos e balas de outros jogadores.',
+    sound: 'Perdeu',
+    gesture: 'Faz como se pegasse algo no ar',
+    category: 'special',
+    className: 'Ladrão',
+  },
+  {
+    id: uuidv4(),
+    name: 'Contagem Regressiva',
+    description: 'Conta de 5 até 1 para ganhar automaticamente.',
+    sound: 'CINCO, QUATRO, TRÊS, DOIS, UM',
+    gesture: 'Mostra dedos correspondentes ao número',
+    category: 'special',
+    className: 'Kabalista',
+  },
+  {
+    id: uuidv4(),
+    name: 'Prepara',
+    description: 'Carrega o cancelamento de ações.',
+    sound: 'Prepara',
+    gesture: 'Cruza braços para o alto formando X',
+    category: 'special',
+    className: 'Pacificador',
+  },
+  {
+    id: uuidv4(),
+    name: 'Cancela',
+    description: 'Cancela todas as ações da rodada.',
+    sound: 'Cancela!',
+    gesture: 'Descruza braços como juiz encerrando partida',
+    category: 'special',
+    className: 'Pacificador',
+  },
+  {
+    id: uuidv4(),
+    name: 'Zzz (Preparar Desfibrilador)',
+    description: 'Prepara desfibrilador para reviver aliado.',
+    sound: 'Zzz',
+    gesture: 'Arrasta mãos de punhos fechados preparando desfibrilador',
+    category: 'special',
+    className: 'Paramédico',
+  },
+  {
+    id: uuidv4(),
+    name: 'Contato',
+    description: 'Revive um aliado morto.',
+    sound: 'Contato!',
+    gesture: 'Encosta mãos de punhos fechados em aliado morto',
+    category: 'special',
+    className: 'Paramédico',
+  },
+  // Finisher
+  {
+    id: uuidv4(),
+    name: 'Finalizador',
+    description: 'Ação especial para duelos 1x1 - quem usar 3 vezes ganha.',
+    sound: 'Não tem som',
+    gesture: 'Estalar dedos de ambas as mãos (como Família Adams)',
+    category: 'finisher',
+    className: null,
+  },
+];
+
+// Seed data for game modes
+const gameModesData = [
+  {
+    id: uuidv4(),
+    name: 'Clássico',
+    description: 'O modo tradicional do Tic Tic Pou com Classes, usando as 4 classes base mais Noviço.',
+    rules: {
+      minPlayersPerClass: 1,
+      allowedClasses: ['Mago', 'Samurai', 'Padre', 'Cangaceiro', 'Noviço'],
+      winCondition: 'lastTwoPlayersWin',
+      finalizerEnabled: true
+    },
+    minPlayers: 3,
+    maxPlayers: 8,
+  },
+  {
+    id: uuidv4(),
+    name: 'Modo Campanha',
+    description: 'Modo avançado onde jogadores começam sem classe e escolhem uma ao tirar a primeira vida.',
+    rules: {
+      startingLives: 2,
+      startingClass: null,
+      classSelectionOnKill: true,
+      allowedClasses: ['Mago', 'Samurai', 'Padre', 'Cangaceiro', 'Assassino', 'Ladrão']
+    },
+    minPlayers: 4,
+    maxPlayers: 10,
+  },
+  {
+    id: uuidv4(),
+    name: 'Em Equipe',
+    description: 'Partidas de 2x2, 3x3, 4x4 com fogo amigo desabilitado e classes de suporte.',
+    rules: {
+      teamMode: true,
+      friendlyFireDisabled: true,
+      allowedClasses: ['Mago', 'Samurai', 'Padre', 'Cangaceiro', 'Assassino', 'Paramédico'],
+      minTeamSize: 2
+    },
+    minPlayers: 4,
+    maxPlayers: 16,
+  },
+  {
+    id: uuidv4(),
+    name: 'Modo JoKenPo',
+    description: 'Versão silenciosa do jogo para ambientes com ruído ou necessidade de silêncio.',
+    rules: {
+      silentMode: true,
+      gestureOnly: true,
+      rhythmType: 'jokenpo',
+      allowedClasses: ['Mago', 'Samurai', 'Padre', 'Cangaceiro']
+    },
+    minPlayers: 2,
+    maxPlayers: 5,
+  },
+  {
+    id: uuidv4(),
+    name: 'Torneio',
+    description: 'Formato competitivo com sistema de pontuação e configuração específica de classes.',
+    rules: {
+      competitiveMode: true,
+      scoringSystem: {
+        kill: 1,
+        win: 5,
+        finalTwo: 3
+      },
+      classDistribution: {
+        'Mago': 2,
+        'Samurai': 2,
+        'Padre': 1,
+        'Cangaceiro': 2,
+        'Assassino': 2
+      }
+    },
+    minPlayers: 8,
+    maxPlayers: 10,
+  },
+];
+
+export async function seedDatabase() {
+  try {
+    console.log('🌱 Starting database seeding...');
+
+    // Clear existing data
+    await db.delete(actions);
+    await db.delete(classes);
+    await db.delete(gameModes);
+    
+    console.log('🧹 Cleared existing data');
+
+    // Seed classes
+    await db.insert(classes).values(classesData);
+    console.log(`✅ Seeded ${classesData.length} classes`);
+
+    // Seed actions
+    await db.insert(actions).values(actionsData);
+    console.log(`✅ Seeded ${actionsData.length} actions`);
+
+    // Seed game modes
+    await db.insert(gameModes).values(gameModesData);
+    console.log(`✅ Seeded ${gameModesData.length} game modes`);
+
+    console.log('🎉 Database seeding completed successfully!');
+  } catch (error) {
+    console.error('❌ Error seeding database:', error);
+    throw error;
+  }
+}
+
+export async function resetDatabase() {
+  try {
+    console.log('🔄 Resetting database...');
+    await seedDatabase();
+    console.log('✅ Database reset completed!');
+  } catch (error) {
+    console.error('❌ Error resetting database:', error);
+    throw error;
+  }
+}
