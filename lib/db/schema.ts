@@ -6,7 +6,6 @@ export const users = pgTable('users', {
   publicId: uuid('public_id').defaultRandom().unique().notNull(), // Public ID (UUID)
   stackId: text('stack_id').notNull().unique(), // Stack Auth ID
   email: text('email').notNull().unique(),
-  username: text('username').notNull(), // Keep for compatibility with current DB
   displayName: text('display_name').notNull(), // Database display name
   avatarUrl: text('avatar_url'), // Database avatar URL
   favoriteClass: text('favorite_class'),
@@ -15,8 +14,7 @@ export const users = pgTable('users', {
   wins: integer('wins').default(0).notNull(),
   losses: integer('losses').default(0).notNull(),
   isAmbassador: boolean('is_ambassador').default(false).notNull(),
-  role: text('role').default('user').notNull(), // 'user', 'ambassador', 'super-admin'
-  tempId: integer('temp_id').notNull(), // From migration
+  role: text('role', { enum: ['user', 'ambassador', 'super-admin'] }).default('user').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

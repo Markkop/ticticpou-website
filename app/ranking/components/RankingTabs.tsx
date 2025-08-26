@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Trophy, Target, TrendingUp, Swords, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import type { RankingEntry } from '@/lib/data/rankings';
+import type { RankingEntry } from '@/lib/types/user';
 
 interface RankingTabsProps {
   rankings: {

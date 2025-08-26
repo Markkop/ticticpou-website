@@ -5,41 +5,12 @@ import { matchesService } from '@/lib/db/services';
 import MatchesClient from './components/MatchesClient';
 import { stackServerApp } from '@/stack';
 import { getUserByStackId } from '@/lib/data/users';
-
-interface Match {
-  id: string;
-  ambassadorId: string;
-  gameMode: string;
-  location: string | null;
-  playedAt: Date;
-  createdAt: Date;
-  ambassador: {
-    id: string;
-    publicId: string;
-    displayName: string;
-  } | null;
-  participants?: {
-    userId: string;
-    userPublicId: string | null;
-    displayName: string | null;
-    avatarUrl: string | null;
-    className: string;
-    placement: number;
-    isWinner: boolean;
-    eliminations: number;
-    eloChange: number;
-    eloAfter: number;
-  }[];
-}
+import type { Match } from '@/lib/types/match';
+import type { AuthenticatedUserData } from '@/lib/types/user';
 
 interface MatchesPageProps {
   matches: Match[];
-  currentUserData?: {
-    id: string;
-    displayName: string;
-    isAmbassador: boolean;
-    role: 'user' | 'ambassador' | 'super-admin';
-  } | null;
+  currentUserData?: AuthenticatedUserData | null;
 }
 
 function MatchesPageComponent({ matches, currentUserData }: MatchesPageProps) {

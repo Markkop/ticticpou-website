@@ -1,7 +1,8 @@
 import { db } from './index';
 import { classes, actions, gameModes, users, matches, matchParticipants } from './schema';
 import { eq, desc, sql, count, avg, sum } from 'drizzle-orm';
-import type { Class, Action, GameMode, User } from './index';
+import type { Class, Action, GameMode } from './index';
+import type { User, CreateUserData, UpdateUserData } from '@/lib/types/user';
 
 // Classes service
 export const classesService = {
@@ -92,40 +93,38 @@ export const usersService = {
     return result[0];
   },
 
-  async updateProfile(publicId: string, updates: Partial<Omit<User, 'id' | 'publicId' | 'createdAt'>>) {
+  async updateProfile(publicId: string, updates: UpdateUserData) {
     return await db.update(users).set({
       ...updates,
       updatedAt: new Date()
     }).where(eq(users.publicId, publicId));
   },
 
-  async updateProfileByStackId(stackId: string, updates: Partial<Omit<User, 'id' | 'publicId' | 'stackId' | 'createdAt'>>) {
+  async updateProfileByStackId(stackId: string, updates: UpdateUserData) {
     return await db.update(users).set({
       ...updates,
       updatedAt: new Date()
     }).where(eq(users.stackId, stackId));
   },
 
-  async create(userData: Omit<User, 'id' | 'publicId' | 'createdAt' | 'updatedAt'>) {
+  async create(userData: CreateUserData): Promise<User> {
     // Generate a unique text ID for the current schema
     const uniqueId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
-    // Create explicit insert data for current database schema
+    // Create insert data with defaults
     const insertData = {
       id: uniqueId,
       stackId: userData.stackId,
       email: userData.email,
-      username: userData.displayName || userData.email.split('@')[0] || 'user', // Map displayName to username
-      displayName: userData.displayName || userData.email.split('@')[0] || 'user',
-      avatarUrl: userData.avatarUrl,
-      favoriteClass: userData.favoriteClass,
-      favoriteGameMode: userData.favoriteGameMode,
-      elo: userData.elo,
-      wins: userData.wins,
-      losses: userData.losses,
-      isAmbassador: userData.isAmbassador,
-      role: userData.role,
-      tempId: userData.tempId,
+      displayName: userData.displayName,
+      avatarUrl: userData.avatarUrl || null,
+      favoriteClass: userData.favoriteClass || null,
+      favoriteGameMode: userData.favoriteGameMode || null,
+      elo: userData.elo || 1000,
+      wins: userData.wins || 0,
+      losses: userData.losses || 0,
+      isAmbassador: userData.isAmbassador || false,
+      role: userData.role || 'user',
     };
     
     const [result] = await db.insert(users).values(insertData).returning();

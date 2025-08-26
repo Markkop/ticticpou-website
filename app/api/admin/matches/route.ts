@@ -20,7 +20,7 @@ export async function GET() {
         playedAt: matches.playedAt,
         createdAt: matches.createdAt,
         ambassador: {
-          username: users.username,
+          displayName: users.displayName,
           email: users.email,
         },
       })

@@ -38,53 +38,55 @@ export async function createMatch(input: CreateMatchInput) {
     const eloChanges = calculateEloChanges(playerResults);
     const eloChangeMap = new Map(eloChanges.map(e => [e.userId, e]));
 
-    await db.transaction(async (tx) => {
-      const [match] = await tx
-        .insert(matches)
-        .values({
-          ambassadorId: input.ambassadorId,
-          gameMode: input.gameMode,
-          location: input.location,
-          playedAt: input.playedAt,
-        })
-        .returning();
+    // Create the match first
+    const [match] = await db
+      .insert(matches)
+      .values({
+        ambassadorId: input.ambassadorId,
+        gameMode: input.gameMode,
+        location: input.location,
+        playedAt: input.playedAt,
+      })
+      .returning();
 
-      const participantRecords = input.participants.map(p => {
-        const eloChange = eloChangeMap.get(p.userId)!;
-        return {
-          matchId: match.id,
-          userId: p.userId,
-          className: p.className,
-          placement: p.placement,
-          eliminations: p.eliminations,
-          isWinner: p.placement === 1,
-          eloBefore: eloChange.eloBefore,
-          eloAfter: eloChange.eloAfter,
-          eloChange: eloChange.eloChange,
-        };
-      });
-
-      await tx.insert(matchParticipants).values(participantRecords);
-
-      for (const eloChange of eloChanges) {
-        const user = participantUsers.find(u => u.id === eloChange.userId);
-        if (user) {
-          const isWinner = input.participants.find(p => p.userId === eloChange.userId)?.placement === 1;
-          await tx
-            .update(users)
-            .set({
-              elo: eloChange.eloAfter,
-              wins: isWinner ? user.wins + 1 : user.wins,
-              losses: !isWinner ? user.losses + 1 : user.losses,
-              updatedAt: new Date(),
-            })
-            .where(eq(users.id, eloChange.userId));
-        }
-      }
+    // Create participant records
+    const participantRecords = input.participants.map(p => {
+      const eloChange = eloChangeMap.get(p.userId)!;
+      return {
+        matchId: match.id,
+        userId: p.userId,
+        className: p.className,
+        placement: p.placement,
+        eliminations: p.eliminations,
+        isWinner: p.placement === 1,
+        eloBefore: eloChange.eloBefore,
+        eloAfter: eloChange.eloAfter,
+        eloChange: eloChange.eloChange,
+      };
     });
 
+    // Insert participants
+    await db.insert(matchParticipants).values(participantRecords);
+
+    // Update user ELOs and win/loss records
+    for (const eloChange of eloChanges) {
+      const user = participantUsers.find(u => u.id === eloChange.userId);
+      if (user) {
+        const isWinner = input.participants.find(p => p.userId === eloChange.userId)?.placement === 1;
+        await db
+          .update(users)
+          .set({
+            elo: eloChange.eloAfter,
+            wins: isWinner ? user.wins + 1 : user.wins,
+            losses: !isWinner ? user.losses + 1 : user.losses,
+            updatedAt: new Date(),
+          })
+          .where(eq(users.id, eloChange.userId));
+      }
+    }
+
     revalidatePath('/ranking');
-    revalidatePath('/matches');
+    revalidatePath('/partidas');
     
     return { success: true };
   } catch (error) {
@@ -110,70 +112,74 @@ export async function updateMatch(
         .from(matchParticipants)
         .where(eq(matchParticipants.matchId, matchId));
 
-      await db.transaction(async (tx) => {
-        for (const oldParticipant of oldParticipants) {
-          await tx
-            .update(users)
-            .set({
-              elo: oldParticipant.eloBefore,
-              wins: sql`${users.wins} - CASE WHEN ${oldParticipant.isWinner} THEN 1 ELSE 0 END`,
-              losses: sql`${users.losses} - CASE WHEN NOT ${oldParticipant.isWinner} THEN 1 ELSE 0 END`,
-              updatedAt: new Date(),
-            })
-            .where(eq(users.id, oldParticipant.userId));
-        }
+      // Revert old participants' ELO changes
+      for (const oldParticipant of oldParticipants) {
+        await db
+          .update(users)
+          .set({
+            elo: oldParticipant.eloBefore,
+            wins: sql`${users.wins} - CASE WHEN ${oldParticipant.isWinner} THEN 1 ELSE 0 END`,
+            losses: sql`${users.losses} - CASE WHEN NOT ${oldParticipant.isWinner} THEN 1 ELSE 0 END`,
+            updatedAt: new Date(),
+          })
+          .where(eq(users.id, oldParticipant.userId));
+      }
 
-        await tx.delete(matchParticipants).where(eq(matchParticipants.matchId, matchId));
+      // Delete old participants
+      await db.delete(matchParticipants).where(eq(matchParticipants.matchId, matchId));
 
-        const userEloMap = new Map(participantUsers.map(u => [u.id, u.elo]));
+      // Calculate new ELO changes
+      const userEloMap = new Map(participantUsers.map(u => [u.id, u.elo]));
 
-        const playerResults: PlayerResult[] = updatedParticipants.map(p => ({
+      const playerResults: PlayerResult[] = updatedParticipants.map(p => ({
+        userId: p.userId,
+        placement: p.placement,
+        eliminations: p.eliminations,
+        currentElo: userEloMap.get(p.userId) || 1000,
+      }));
+
+      const eloChanges = calculateEloChanges(playerResults);
+      const eloChangeMap = new Map(eloChanges.map(e => [e.userId, e]));
+
+      // Create new participant records
+      const participantRecords = updatedParticipants.map(p => {
+        const eloChange = eloChangeMap.get(p.userId)!;
+        return {
+          matchId,
           userId: p.userId,
+          className: p.className,
           placement: p.placement,
           eliminations: p.eliminations,
-          currentElo: userEloMap.get(p.userId) || 1000,
-        }));
-
-        const eloChanges = calculateEloChanges(playerResults);
-        const eloChangeMap = new Map(eloChanges.map(e => [e.userId, e]));
-
-        const participantRecords = updatedParticipants.map(p => {
-          const eloChange = eloChangeMap.get(p.userId)!;
-          return {
-            matchId,
-            userId: p.userId,
-            className: p.className,
-            placement: p.placement,
-            eliminations: p.eliminations,
-            isWinner: p.placement === 1,
-            eloBefore: eloChange.eloBefore,
-            eloAfter: eloChange.eloAfter,
-            eloChange: eloChange.eloChange,
-          };
-        });
-
-        await tx.insert(matchParticipants).values(participantRecords);
-
-        for (const eloChange of eloChanges) {
-          const user = participantUsers.find(u => u.id === eloChange.userId);
-          if (user) {
-            const isWinner = updatedParticipants.find(p => p.userId === eloChange.userId)?.placement === 1;
-            await tx
-              .update(users)
-              .set({
-                elo: eloChange.eloAfter,
-                wins: isWinner ? user.wins + 1 : user.wins,
-                losses: !isWinner ? user.losses + 1 : user.losses,
-                updatedAt: new Date(),
-              })
-              .where(eq(users.id, eloChange.userId));
-          }
-        }
+          isWinner: p.placement === 1,
+          eloBefore: eloChange.eloBefore,
+          eloAfter: eloChange.eloAfter,
+          eloChange: eloChange.eloChange,
+        };
       });
+
+      // Insert new participants
+      await db.insert(matchParticipants).values(participantRecords);
+
+      // Apply new ELO changes
+      for (const eloChange of eloChanges) {
+        const user = participantUsers.find(u => u.id === eloChange.userId);
+        if (user) {
+          const isWinner = updatedParticipants.find(p => p.userId === eloChange.userId)?.placement === 1;
+          await db
+            .update(users)
+            .set({
+              elo: eloChange.eloAfter,
+              wins: isWinner ? user.wins + 1 : user.wins,
+              losses: !isWinner ? user.losses + 1 : user.losses,
+              updatedAt: new Date(),
+            })
+            .where(eq(users.id, eloChange.userId));
+        }
+      }
     }
 
     revalidatePath('/ranking');
-    revalidatePath('/matches');
+    revalidatePath('/partidas');
     
     return { success: true };
   } catch (error) {
@@ -189,24 +195,24 @@ export async function deleteMatch(matchId: string) {
       .from(matchParticipants)
       .where(eq(matchParticipants.matchId, matchId));
 
-    await db.transaction(async (tx) => {
-      for (const oldParticipant of oldParticipants) {
-        await tx
-          .update(users)
-          .set({
-            elo: oldParticipant.eloBefore,
-            wins: sql`${users.wins} - CASE WHEN ${oldParticipant.isWinner} THEN 1 ELSE 0 END`,
-            losses: sql`${users.losses} - CASE WHEN NOT ${oldParticipant.isWinner} THEN 1 ELSE 0 END`,
-            updatedAt: new Date(),
-          })
-          .where(eq(users.id, oldParticipant.userId));
-      }
+    // Revert participants' ELO changes
+    for (const oldParticipant of oldParticipants) {
+      await db
+        .update(users)
+        .set({
+          elo: oldParticipant.eloBefore,
+          wins: sql`${users.wins} - CASE WHEN ${oldParticipant.isWinner} THEN 1 ELSE 0 END`,
+          losses: sql`${users.losses} - CASE WHEN NOT ${oldParticipant.isWinner} THEN 1 ELSE 0 END`,
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, oldParticipant.userId));
+    }
 
-      await tx.delete(matches).where(eq(matches.id, matchId));
-    });
+    // Delete the match (participants will be deleted by cascade)
+    await db.delete(matches).where(eq(matches.id, matchId));
 
     revalidatePath('/ranking');
-    revalidatePath('/matches');
+    revalidatePath('/partidas');
     
     return { success: true };
   } catch (error) {

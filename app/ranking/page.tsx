@@ -1,7 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Crown, Trophy, TrendingUp, Users, Target, Swords, Globe } from 'lucide-react';
 import { Navigation } from '@/components/navigation';
-import { getRankingsByGameMode, type RankingEntry } from '@/lib/data/rankings';
+import { getRankingsByGameMode } from '@/lib/data/rankings';
+import type { RankingEntry } from '@/lib/types/user';
 import RankingTabs from './components/RankingTabs';
 
 interface RankingPageData {

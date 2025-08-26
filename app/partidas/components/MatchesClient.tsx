@@ -8,45 +8,12 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Search, Users, MapPin, ChevronDown, ChevronUp, Trophy, Plus, Edit2 } from 'lucide-react';
 import MatchEditor from './MatchEditor';
-
-interface MatchParticipant {
-  userId: string;
-  userPublicId: string | null;
-  displayName: string | null;
-  avatarUrl: string | null;
-  className: string;
-  placement: number;
-  isWinner: boolean;
-  eliminations: number;
-  eloChange: number;
-  eloAfter: number;
-}
-
-interface Match {
-  id: string;
-  ambassadorId: string;
-  gameMode: string;
-  location: string | null;
-  playedAt: Date;
-  createdAt: Date;
-  ambassador: {
-    id: string;
-    publicId: string;
-    displayName: string;
-  } | null;
-  participants?: MatchParticipant[];
-}
-
-interface UserData {
-  id: string;
-  displayName: string;
-  isAmbassador: boolean;
-  role: 'user' | 'ambassador' | 'super-admin';
-}
+import type { Match } from '@/lib/types/match';
+import type { AuthenticatedUserData } from '@/lib/types/user';
 
 interface MatchesClientProps {
   matches: Match[];
-  currentUserData?: UserData | null;
+  currentUserData?: AuthenticatedUserData | null;
 }
 
 function MatchRow({ match, canEdit, onEdit }: { match: Match; canEdit: boolean; onEdit: () => void }) {

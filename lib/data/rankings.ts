@@ -4,21 +4,7 @@ import { db } from '@/lib/db';
 import { users, matchParticipants, matches } from '@/lib/db/schema';
 import { desc, eq, and, sql } from 'drizzle-orm';
 import { type GameMode } from '@/lib/elo';
-
-export interface RankingEntry {
-  userId: string;
-  userPublicId: string;
-  displayName: string;
-  avatarUrl: string | null;
-  elo: number;
-  wins: number;
-  losses: number;
-  winRate: number;
-  totalMatches: number;
-  eliminations: number;
-  avgEliminations: number;
-  rank: number;
-}
+import type { RankingEntry } from '@/lib/types/user';
 
 export async function getRankingsByGameMode(
   gameMode: GameMode | 'global',

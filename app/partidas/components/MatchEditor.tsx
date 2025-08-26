@@ -5,28 +5,18 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Calendar, MapPin, Plus, X, Trophy, Users, QrCode, Edit2, Trash2, Save } from 'lucide-react';
+import { Calendar, MapPin, Plus, X, Trophy, Users, QrCode, Edit2, Trash2, Save, TestTube } from 'lucide-react';
 import { createMatch, updateMatch, deleteMatch } from '@/lib/data/matches';
 import { classes } from '@/lib/data/classes';
 import { searchUsers } from '@/lib/data/users';
 import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
+import type { GameMode, ParticipantSlot } from '@/lib/types/match';
+import type { UserSummary } from '@/lib/types/user';
 
 const QrReader = dynamic(() => import('react-qr-reader').then((mod) => mod.QrReader), { 
   ssr: false 
 });
-
-type GameMode = 'classic_4' | 'normal_5' | 'free_6plus';
-
-interface ParticipantSlot {
-  userId?: string;
-  displayName?: string;
-  avatarUrl?: string | null;
-  className?: string;
-  eliminations: number;
-  isWinner: boolean;
-  placement?: number;
-}
 
 interface MatchEditorProps {
   ambassadorId: string;
@@ -62,7 +52,7 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
   const [isScanning, setIsScanning] = useState(false);
   const [scanningSlot, setScanningSlot] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<{id: string; displayName: string; avatarUrl?: string | null}[]>([]);
+  const [searchResults, setSearchResults] = useState<UserSummary[]>([]);
   const [searchingSlot, setSearchingSlot] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -124,7 +114,7 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
     }
   }, [participants, searchQuery, handleSearch]);
 
-  const handleSelectUser = (slotIndex: number, user: {id: string; displayName: string; avatarUrl?: string | null}) => {
+  const handleSelectUser = (slotIndex: number, user: UserSummary) => {
     const newParticipants = [...participants];
     newParticipants[slotIndex] = {
       ...newParticipants[slotIndex],
@@ -138,13 +128,14 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
     setSearchResults([]);
   };
 
-  const handleQrScan = (result: { text: string } | null | undefined) => {
-    if (result?.text && scanningSlot !== null) {
+  const handleQrScan = (result: unknown) => {
+    if (result && typeof result === 'object' && 'text' in result && result.text && scanningSlot !== null) {
       try {
-        const userData = JSON.parse(result.text);
+        const userData = JSON.parse(result.text as string);
         if (userData.userId && userData.displayName) {
           handleSelectUser(scanningSlot, {
             id: userData.userId,
+            publicId: userData.publicId || userData.userId, // fallback to userId for now
             displayName: userData.displayName,
             avatarUrl: userData.avatarUrl,
           });
@@ -240,12 +231,21 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
         participants: participantsWithPlacements,
       };
 
+      let result;
       if (existingMatch) {
-        await updateMatch(existingMatch.id, matchData);
-        toast.success('Partida atualizada com sucesso!');
+        result = await updateMatch(existingMatch.id, matchData);
+        if (result.success) {
+          toast.success('Partida atualizada com sucesso!');
+        } else {
+          throw new Error(result.error || 'Failed to update match');
+        }
       } else {
-        await createMatch(matchData);
-        toast.success('Partida criada com sucesso!');
+        result = await createMatch(matchData);
+        if (result.success) {
+          toast.success('Partida criada com sucesso!');
+        } else {
+          throw new Error(result.error || 'Failed to create match');
+        }
       }
 
       onSave?.();
@@ -275,6 +275,61 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleTestFill = () => {
+    // Test users data from the database
+    const testUsers = [
+      {
+        id: 'user_1756169889947_ir2r36dpc',
+        displayName: 'marcelokopmann',
+        avatarUrl: null,
+      },
+      {
+        id: 'user_1756169889910_wmy3fjpga',
+        displayName: 'Marcelo Test User',
+        avatarUrl: 'https://avatars.githubusercontent.com/u/1234567?v=4',
+      },
+      {
+        id: 'user_1756223669050_lkkbc6r6e',
+        displayName: 'marcelokopmann+2',
+        avatarUrl: null,
+      },
+      {
+        id: 'user_1756223757010_iy900ximm',
+        displayName: 'marcelokopmann+3',
+        avatarUrl: null,
+      },
+    ];
+
+    // Base classes for the selected game mode
+    const baseClasses = ['mago', 'samurai', 'padre', 'cangaceiro'];
+    
+    // Create test participants
+    const testParticipants: ParticipantSlot[] = [];
+    const playerCount = gameMode === 'free_6plus' ? 4 : gameModeConfig[gameMode].players;
+    
+    for (let i = 0; i < playerCount; i++) {
+      if (i < testUsers.length) {
+        testParticipants.push({
+          userId: testUsers[i].id,
+          displayName: testUsers[i].displayName,
+          avatarUrl: testUsers[i].avatarUrl,
+          className: baseClasses[i % baseClasses.length],
+          eliminations: Math.floor(Math.random() * 3), // Random eliminations 0-2
+          isWinner: i === 0, // First player wins
+        });
+      } else {
+        testParticipants.push({
+          eliminations: 0,
+          isWinner: false,
+        });
+      }
+    }
+    
+    setParticipants(testParticipants);
+    setLocation('Praça da Matriz');
+    toast.success('Dados de teste preenchidos!');
   };
 
   const availableClasses = gameMode === 'free_6plus' 
@@ -308,6 +363,15 @@ export default function MatchEditor({ ambassadorId, ambassadorName, existingMatc
               disabled={isSaving}
             >
               Cancelar
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleTestFill}
+              disabled={isSaving}
+            >
+              <TestTube className="w-4 h-4 mr-1" />
+              Test
             </Button>
             <Button
               variant="default"

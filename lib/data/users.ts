@@ -3,8 +3,9 @@
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { ilike, or, eq } from 'drizzle-orm';
+import type { User, UserSummary } from '@/lib/types/user';
 
-export async function searchUsers(query: string) {
+export async function searchUsers(query: string): Promise<UserSummary[]> {
   try {
     const results = await db
       .select({
@@ -29,7 +30,7 @@ export async function searchUsers(query: string) {
   }
 }
 
-export async function getUserById(userId: string) {
+export async function getUserById(userId: string): Promise<User | null> {
   try {
     const result = await db
       .select()
@@ -44,7 +45,7 @@ export async function getUserById(userId: string) {
   }
 }
 
-export async function getUserByStackId(stackId: string) {
+export async function getUserByStackId(stackId: string): Promise<User | null> {
   try {
     const result = await db
       .select()
