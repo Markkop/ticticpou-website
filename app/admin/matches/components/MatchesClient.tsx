@@ -20,7 +20,7 @@ interface Match {
   playedAt: string;
   createdAt: string;
   ambassador: {
-    username: string;
+    displayName: string;
     email: string;
   };
   participantCount: number;
@@ -114,7 +114,7 @@ export function MatchesClient() {
                   </TableCell>
                   <TableCell>
                     <div>
-                      <div className="font-medium">{match.ambassador.username}</div>
+                      <div className="font-medium">{match.ambassador.displayName}</div>
                       <div className="text-sm text-gray-500">{match.ambassador.email}</div>
                     </div>
                   </TableCell>

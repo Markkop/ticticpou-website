@@ -174,7 +174,7 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
         onClose={() => setShowQRModal(false)}
         userData={{
           userId: userProfile.publicId,
-          username: userProfile.displayName,
+          displayName: userProfile.displayName,
           avatarUrl: user.avatarUrl || undefined,
         }}
       />

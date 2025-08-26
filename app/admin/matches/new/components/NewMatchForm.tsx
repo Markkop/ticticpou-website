@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface User {
   id: string;
-  username: string;
+  displayName: string;
   email: string;
 }
 
@@ -237,7 +237,7 @@ export function NewMatchForm() {
                   <SelectContent>
                     {users.map((user) => (
                       <SelectItem key={user.id} value={user.id}>
-                        {user.username}
+                        {user.displayName}
                       </SelectItem>
                     ))}
                   </SelectContent>

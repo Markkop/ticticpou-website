@@ -21,7 +21,7 @@ import { Badge } from '@/components/ui/badge';
 interface User {
   id: string;
   email: string;
-  username: string;
+  displayName: string;
   role: string;
   elo: number;
   wins: number;
@@ -117,7 +117,7 @@ export function UsersClient() {
               <TableRow key={user.id}>
                 <TableCell>
                   <div>
-                    <div className="font-medium">{user.username}</div>
+                    <div className="font-medium">{user.displayName}</div>
                     <div className="text-sm text-gray-500">{user.email}</div>
                   </div>
                 </TableCell>

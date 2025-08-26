@@ -12,7 +12,7 @@ interface QRCodeModalProps {
   onClose: () => void;
   userData: {
     userId: string;
-    username: string;
+    displayName: string;
     avatarUrl?: string;
   };
 }
@@ -26,7 +26,7 @@ export default function QRCodeModal({ isOpen, onClose, userData }: QRCodeModalPr
     try {
       const qrData = JSON.stringify({
         userId: userData.userId,
-        displayName: userData.username,
+        displayName: userData.displayName,
         avatarUrl: userData.avatarUrl,
       });
 
@@ -59,7 +59,7 @@ export default function QRCodeModal({ isOpen, onClose, userData }: QRCodeModalPr
 
     const link = document.createElement('a');
     link.href = qrCodeUrl;
-    link.download = `qr-${userData.username}.png`;
+    link.download = `qr-${userData.displayName}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -70,7 +70,7 @@ export default function QRCodeModal({ isOpen, onClose, userData }: QRCodeModalPr
     try {
       const qrData = JSON.stringify({
         userId: userData.userId,
-        displayName: userData.username,
+        displayName: userData.displayName,
         avatarUrl: userData.avatarUrl,
       });
       
@@ -113,13 +113,13 @@ export default function QRCodeModal({ isOpen, onClose, userData }: QRCodeModalPr
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={qrCodeUrl} 
-                    alt={`QR Code para ${userData.username}`}
+                    alt={`QR Code para ${userData.displayName}`}
                     className="w-64 h-64"
                   />
                 </div>
                 
                 <div className="text-center">
-                  <h3 className="font-semibold">{userData.username}</h3>
+                  <h3 className="font-semibold">{userData.displayName}</h3>
                   <p className="text-sm text-muted-foreground">
                     Escaneie para adicionar em partidas
                   </p>
