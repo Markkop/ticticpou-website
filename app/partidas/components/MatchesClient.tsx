@@ -28,69 +28,151 @@ function MatchRow({ match, canEdit, onEdit }: { match: Match; canEdit: boolean; 
     return names[mode] || mode;
   };
 
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString('pt-BR', { 
+      day: '2-digit', 
+      month: '2-digit',
+      year: '2-digit'
+    });
+  };
+
+  const formatTime = (date: Date) => {
+    return new Date(date).toLocaleTimeString('pt-BR', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+
   return (
-    <Card className="border-border bg-card hover:shadow-md transition-all duration-200 shadow-sm mb-4">
+    <Card className="border-border bg-card hover:shadow-md transition-all duration-200 shadow-sm mb-2">
       <CardContent className="p-0">
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
           <CollapsibleTrigger asChild>
-            <div className="flex items-center justify-between p-6 hover:bg-muted/30 cursor-pointer">
-              <div className="flex items-center gap-6">
-                <div className="text-center min-w-[80px]">
-                  <div className="text-xs text-muted-foreground mb-1">DATA</div>
-                  <div className="font-medium text-foreground flex flex-col">
-                    <span>{new Date(match.playedAt).toLocaleDateString('pt-BR')}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(match.playedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+            <div className="p-3 sm:p-4 hover:bg-muted/30 cursor-pointer">
+              {/* Mobile Layout */}
+              <div className="sm:hidden">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-medium text-primary text-sm">{getGameModeName(match.gameMode)}</span>
+                      <span className="text-xs text-muted-foreground">•</span>
+                      <span className="text-xs text-muted-foreground">{formatDate(match.playedAt)}</span>
+                      <span className="text-xs text-muted-foreground">{formatTime(match.playedAt)}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                      <MapPin className="w-3 h-3" />
+                      <span>{match.location || 'Local não informado'}</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Embaixador: <span className="text-foreground font-medium">{match.ambassador?.displayName || 'N/A'}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {canEdit && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit();
+                        }}
+                        title="Editar partida"
+                        className="h-8 w-8 p-0"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                      </Button>
+                    )}
+                    {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
                   </div>
                 </div>
                 
-                <div className="text-center min-w-[120px]">
-                  <div className="text-xs text-muted-foreground mb-1">MODO DE JOGO</div>
-                  <div className="font-medium text-primary">{getGameModeName(match.gameMode)}</div>
-                </div>
-                
-                <div className="text-center min-w-[120px]">
-                  <div className="text-xs text-muted-foreground mb-1">LOCAL</div>
-                  <div className="font-medium text-foreground flex items-center justify-center gap-1">
-                    <MapPin className="w-3 h-3" />
-                    {match.location || 'Não informado'}
+                {/* Mobile participants preview */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium text-primary">{match.participants?.length || 0} jogadores</span>
                   </div>
-                </div>
-                
-                <div className="text-center min-w-[120px]">
-                  <div className="text-xs text-muted-foreground mb-1">EMBAIXADOR</div>
-                  <div className="font-medium text-foreground">
-                    {match.ambassador?.displayName || 'N/A'}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    @{match.ambassador?.displayName || 'N/A'}
-                  </div>
+                  {!isExpanded && match.participants && match.participants.length > 0 && (
+                    <div className="flex items-center -space-x-2">
+                      {match.participants.slice(0, 3).map((participant, idx) => (
+                        <Avatar key={participant.userId} className="w-6 h-6 border border-background">
+                          <AvatarImage src={participant.avatarUrl || undefined} />
+                          <AvatarFallback className="text-xs">{participant.displayName?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
+                        </Avatar>
+                      ))}
+                      {match.participants.length > 3 && (
+                        <div className="w-6 h-6 rounded-full bg-muted border border-background flex items-center justify-center">
+                          <span className="text-xs text-muted-foreground">+{match.participants.length - 3}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-              
-              <div className="flex items-center gap-3">
-                <div className="text-center">
-                  <div className="text-xs text-muted-foreground mb-1">PARTICIPANTES</div>
-                  <div className="flex items-center gap-1 text-primary">
-                    <Users className="w-4 h-4" />
-                    <span className="font-medium">{match.participants?.length || 0}</span>
+
+              {/* Desktop Layout */}
+              <div className="hidden sm:flex items-center justify-between">
+                <div className="flex items-center gap-4 lg:gap-6 flex-1">
+                  <div className="text-right text-xs">
+                    <div className="font-medium text-foreground">{formatDate(match.playedAt)}</div>
+                    <div className="text-muted-foreground">{formatTime(match.playedAt)}</div>
+                  </div>
+                  
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium text-primary text-sm mb-1">{getGameModeName(match.gameMode)}</div>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <MapPin className="w-3 h-3 flex-shrink-0" />
+                      <span className="truncate">{match.location || 'Local não informado'}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="hidden lg:block min-w-0">
+                    <div className="text-xs text-muted-foreground mb-1">Embaixador</div>
+                    <div className="font-medium text-foreground text-sm truncate">
+                      {match.ambassador?.displayName || 'N/A'}
+                    </div>
                   </div>
                 </div>
-                {canEdit && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEdit();
-                    }}
-                    title="Editar partida"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </Button>
-                )}
-                {isExpanded ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
+                
+                <div className="flex items-center gap-3">
+                  {!isExpanded && match.participants && match.participants.length > 0 && (
+                    <div className="flex items-center -space-x-1.5">
+                      {match.participants.slice(0, 4).map((participant, idx) => (
+                        <Avatar key={participant.userId} className="w-7 h-7 border-2 border-background">
+                          <AvatarImage src={participant.avatarUrl || undefined} />
+                          <AvatarFallback className="text-xs">{participant.displayName?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
+                        </Avatar>
+                      ))}
+                      {match.participants.length > 4 && (
+                        <div className="w-7 h-7 rounded-full bg-muted border-2 border-background flex items-center justify-center">
+                          <span className="text-xs text-muted-foreground">+{match.participants.length - 4}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center gap-1 text-primary">
+                    <Users className="w-4 h-4" />
+                    <span className="font-medium text-sm">{match.participants?.length || 0}</span>
+                  </div>
+                  
+                  {canEdit && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit();
+                      }}
+                      title="Editar partida"
+                      className="h-8 w-8 p-0"
+                    >
+                      <Edit2 className="w-3 h-3" />
+                    </Button>
+                  )}
+                  
+                  {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                </div>
               </div>
             </div>
           </CollapsibleTrigger>
@@ -283,7 +365,7 @@ export default function MatchesClient({ matches, currentUserData }: MatchesClien
             </p>
           </div>
 
-          <div className="space-y-0">
+          <div className="space-y-1">
             {filteredMatches.length === 0 ? (
               <Card className="border-border bg-card shadow-sm">
                 <CardContent className="p-12 text-center">
