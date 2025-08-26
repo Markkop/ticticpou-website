@@ -67,6 +67,18 @@ export async function getRankingsByGameMode(
       
       return rankings.slice(0, limit);
     } else {
+      // First, get users who have actually participated in this specific game mode
+      const participatingUsers = await db
+        .select({ userId: matchParticipants.userId })
+        .from(matchParticipants)
+        .innerJoin(matches, eq(matches.id, matchParticipants.matchId))
+        .where(eq(matches.gameMode, gameMode))
+        .groupBy(matchParticipants.userId);
+
+      if (participatingUsers.length === 0) {
+        return [];
+      }
+
       const usersWithStats = await db
         .select({
           user: users,
@@ -76,11 +88,11 @@ export async function getRankingsByGameMode(
           modeLosses: sql<number>`COUNT(CASE WHEN NOT ${matchParticipants.isWinner} THEN 1 END)`,
         })
         .from(users)
-        .leftJoin(
+        .innerJoin(
           matchParticipants,
           eq(matchParticipants.userId, users.id)
         )
-        .leftJoin(
+        .innerJoin(
           matches,
           and(
             eq(matches.id, matchParticipants.matchId),
@@ -88,7 +100,6 @@ export async function getRankingsByGameMode(
           )
         )
         .groupBy(users.id)
-        .having(sql`COUNT(DISTINCT ${matchParticipants.matchId}) > 0`)
         .orderBy(desc(users.elo))
         .limit(limit);
       
