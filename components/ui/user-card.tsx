@@ -21,6 +21,7 @@ interface UserCardProps {
   showElo?: boolean;
   showRank?: boolean;
   isClickable?: boolean;
+  compact?: boolean;
   className?: string;
   children?: React.ReactNode;
 }
@@ -41,6 +42,7 @@ export function UserCard({
   showElo = false,
   showRank = false,
   isClickable = true,
+  compact = false,
   className,
   children
 }: UserCardProps) {
@@ -50,32 +52,90 @@ export function UserCard({
       isClickable && 'hover:shadow-md cursor-pointer',
       className
     )}>
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between">
+      <CardContent className={cn(compact ? 'p-2 sm:p-3' : 'p-4')}>
+        {/* Mobile Layout */}
+        {compact && (
+          <div className="sm:hidden">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {/* Rank Display */}
+                {showRank && rank && (
+                  <div className="text-lg font-bold text-muted-foreground min-w-[28px] text-center flex-shrink-0">
+                    {getRankMedal(rank) || `#${rank}`}
+                  </div>
+                )}
+                
+                {/* Avatar */}
+                <Avatar className="h-8 w-8 flex-shrink-0">
+                  <AvatarImage src={user.avatarUrl || undefined} alt={user.displayName} />
+                  <AvatarFallback className="text-xs">{user.displayName[0]?.toUpperCase()}</AvatarFallback>
+                </Avatar>
+                
+                {/* User Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium text-foreground text-sm truncate">{user.displayName}</span>
+                    {user.isAmbassador && (
+                      <Crown className="h-3 w-3 text-primary flex-shrink-0" />
+                    )}
+                  </div>
+                  {showStats && user.wins !== undefined && user.losses !== undefined && (
+                    <div className="text-xs text-muted-foreground">
+                      {user.wins}V/{user.losses}D
+                      {user.wins + user.losses > 0 && (
+                        <span> • {((user.wins / (user.wins + user.losses)) * 100).toFixed(0)}%</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Right Side Content */}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {showElo && user.elo && (
+                  <EloDisplay elo={user.elo} size="xs" />
+                )}
+                {children}
+                {isClickable && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Desktop Layout */}
+        <div className={cn(compact ? 'hidden sm:flex' : 'flex', 'items-center justify-between')}>
           <div className="flex items-center gap-4">
             {/* Rank Display */}
             {showRank && rank && (
-              <div className="text-2xl font-bold text-muted-foreground w-12 text-center">
+              <div className={cn(
+                'font-bold text-muted-foreground text-center',
+                compact ? 'text-xl w-10' : 'text-2xl w-12'
+              )}>
                 {getRankMedal(rank) || `#${rank}`}
               </div>
             )}
             
             {/* Avatar */}
-            <Avatar className={cn(showRank ? 'h-10 w-10' : 'h-12 w-12')}>
+            <Avatar className={cn(
+              showRank ? (compact ? 'h-8 w-8' : 'h-10 w-10') : (compact ? 'h-10 w-10' : 'h-12 w-12')
+            )}>
               <AvatarImage src={user.avatarUrl || undefined} alt={user.displayName} />
-              <AvatarFallback>{user.displayName[0]?.toUpperCase()}</AvatarFallback>
+              <AvatarFallback className={compact ? 'text-xs' : ''}>{user.displayName[0]?.toUpperCase()}</AvatarFallback>
             </Avatar>
             
             {/* User Info */}
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-foreground">{user.displayName}</span>
+                <span className={cn(
+                  'font-semibold text-foreground',
+                  compact ? 'text-sm' : ''
+                )}>{user.displayName}</span>
                 {user.isAmbassador && (
-                  <Crown className="h-4 w-4 text-primary" />
+                  <Crown className={cn('text-primary', compact ? 'h-3 w-3' : 'h-4 w-4')} />
                 )}
               </div>
               {showStats && user.wins !== undefined && user.losses !== undefined && (
-                <div className="text-sm text-muted-foreground">
+                <div className={cn('text-muted-foreground', compact ? 'text-xs' : 'text-sm')}>
                   {user.wins}V / {user.losses}D
                   {user.wins + user.losses > 0 && (
                     <span> • {((user.wins / (user.wins + user.losses)) * 100).toFixed(1)}% WR</span>
@@ -88,10 +148,10 @@ export function UserCard({
           {/* Right Side Content */}
           <div className="flex items-center gap-4">
             {showElo && user.elo && (
-              <EloDisplay elo={user.elo} size="sm" />
+              <EloDisplay elo={user.elo} size={compact ? 'xs' : 'sm'} />
             )}
             {children}
-            {isClickable && <ChevronRight className="h-5 w-5 text-muted-foreground" />}
+            {isClickable && <ChevronRight className={cn('text-muted-foreground', compact ? 'h-4 w-4' : 'h-5 w-5')} />}
           </div>
         </div>
       </CardContent>

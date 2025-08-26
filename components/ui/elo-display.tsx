@@ -2,12 +2,13 @@ import { cn, getEloColor, getEloRankName } from '@/lib/utils';
 
 interface EloDisplayProps {
   elo: number;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   showLabel?: boolean;
   className?: string;
 }
 
 const sizeClasses = {
+  xs: 'text-xs',
   sm: 'text-sm',
   md: 'text-xl',
   lg: 'text-2xl',

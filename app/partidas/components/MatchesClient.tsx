@@ -94,7 +94,7 @@ function MatchRow({ match, canEdit, onEdit }: { match: Match; canEdit: boolean; 
                   </div>
                   {!isExpanded && match.participants && match.participants.length > 0 && (
                     <div className="flex items-center -space-x-2">
-                      {match.participants.slice(0, 3).map((participant, idx) => (
+                      {match.participants.slice(0, 3).map((participant) => (
                         <Avatar key={participant.userId} className="w-6 h-6 border border-background">
                           <AvatarImage src={participant.avatarUrl || undefined} />
                           <AvatarFallback className="text-xs">{participant.displayName?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
@@ -137,7 +137,7 @@ function MatchRow({ match, canEdit, onEdit }: { match: Match; canEdit: boolean; 
                 <div className="flex items-center gap-3">
                   {!isExpanded && match.participants && match.participants.length > 0 && (
                     <div className="flex items-center -space-x-1.5">
-                      {match.participants.slice(0, 4).map((participant, idx) => (
+                      {match.participants.slice(0, 4).map((participant) => (
                         <Avatar key={participant.userId} className="w-7 h-7 border-2 border-background">
                           <AvatarImage src={participant.avatarUrl || undefined} />
                           <AvatarFallback className="text-xs">{participant.displayName?.[0]?.toUpperCase() || 'U'}</AvatarFallback>

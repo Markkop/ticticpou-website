@@ -88,82 +88,159 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-card border-b border-border">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center gap-6">
-            {/* Avatar */}
-            {user.avatarUrl ? (
-              <Image 
-                src={user.avatarUrl} 
-                alt={user.displayName || 'User avatar'}
-                width={80}
-                height={80}
-                className="w-20 h-20 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-20 h-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold">
-                {user.displayName?.charAt(0).toUpperCase() || 'U'}
-              </div>
-            )}
-            
-            {/* User Info */}
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-muted-foreground text-sm">RANK #{userRank}</span>
-                <h1 className="text-2xl font-bold text-foreground">
-                  {user.displayName}
-                </h1>
-              </div>
-              <p className="text-muted-foreground">ID: {user.publicId}</p>
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center gap-4">
-              {/* QR Code Button - always visible */}
-              <Button
-                variant="outline"
-                onClick={() => setShowQRModal(true)}
-                className="flex items-center gap-2"
-              >
-                <QrCode className="w-4 h-4" />
-                Código QR
-              </Button>
-              
-              {/* Auth Stack Button - only show for own profile */}
-              {isOwnProfile && (
-                <UserButton />
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
+          {/* Mobile Layout */}
+          <div className="sm:hidden">
+            <div className="flex items-start gap-3 mb-4">
+              {/* Avatar */}
+              {user.avatarUrl ? (
+                <Image 
+                  src={user.avatarUrl} 
+                  alt={user.displayName || 'User avatar'}
+                  width={60}
+                  height={60}
+                  className="w-15 h-15 rounded-full object-cover flex-shrink-0"
+                />
+              ) : (
+                <div className="w-15 h-15 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold flex-shrink-0">
+                  {user.displayName?.charAt(0).toUpperCase() || 'U'}
+                </div>
               )}
+              
+              {/* User Info */}
+              <div className="flex-1 min-w-0">
+                <div className="mb-1">
+                  <span className="text-muted-foreground text-xs">RANK #{userRank}</span>
+                  <h1 className="text-lg font-bold text-foreground truncate">
+                    {user.displayName}
+                  </h1>
+                </div>
+                <p className="text-muted-foreground text-xs truncate">ID: {user.publicId}</p>
+              </div>
+              
+              {/* Actions */}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowQRModal(true)}
+                  className="p-2"
+                >
+                  <QrCode className="w-4 h-4" />
+                </Button>
+                {isOwnProfile && (
+                  <UserButton />
+                )}
+              </div>
+            </div>
+            
+            {/* Mobile Stats Cards */}
+            <div className="grid grid-cols-2 gap-2">
+              <Card className="bg-chart-1/10 border-chart-1/20">
+                <CardContent className="p-2 text-center">
+                  <div className="text-lg font-bold text-chart-1">#{userRank}</div>
+                  <div className="text-xs text-muted-foreground">RANK</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-chart-2/10 border-chart-2/20">
+                <CardContent className="p-2 text-center">
+                  <div className="text-lg font-bold text-chart-2">{totalMatches}</div>
+                  <div className="text-xs text-muted-foreground">MATCHES</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-chart-3/10 border-chart-3/20">
+                <CardContent className="p-2 text-center">
+                  <div className="text-lg font-bold text-chart-3">{userProfile.wins}</div>
+                  <div className="text-xs text-muted-foreground">WINS</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-chart-4/10 border-chart-4/20">
+                <CardContent className="p-2 text-center">
+                  <div className="text-lg font-bold text-chart-4">{ttpYears}</div>
+                  <div className="text-xs text-muted-foreground">TTP YEARS</div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            <Card className="bg-chart-1/10 border-chart-1/20">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-chart-1 mb-1">#{userRank}</div>
-                <div className="text-sm text-muted-foreground">RANKING</div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-chart-2/10 border-chart-2/20">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-chart-2 mb-1">{totalMatches}</div>
-                <div className="text-sm text-muted-foreground">TOTAL MATCHES</div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-chart-3/10 border-chart-3/20">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-chart-3 mb-1">{userProfile.wins}</div>
-                <div className="text-sm text-muted-foreground">WINS</div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-chart-4/10 border-chart-4/20">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-chart-4 mb-1">{ttpYears}</div>
-                <div className="text-sm text-muted-foreground">TTP YEARS</div>
-              </CardContent>
-            </Card>
+          {/* Desktop Layout */}
+          <div className="hidden sm:block">
+            <div className="flex items-center gap-6">
+              {/* Avatar */}
+              {user.avatarUrl ? (
+                <Image 
+                  src={user.avatarUrl} 
+                  alt={user.displayName || 'User avatar'}
+                  width={80}
+                  height={80}
+                  className="w-20 h-20 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold">
+                  {user.displayName?.charAt(0).toUpperCase() || 'U'}
+                </div>
+              )}
+              
+              {/* User Info */}
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-muted-foreground text-sm">RANK #{userRank}</span>
+                  <h1 className="text-2xl font-bold text-foreground">
+                    {user.displayName}
+                  </h1>
+                </div>
+                <p className="text-muted-foreground">ID: {user.publicId}</p>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-4">
+                {/* QR Code Button - always visible */}
+                <Button
+                  variant="outline"
+                  onClick={() => setShowQRModal(true)}
+                  className="flex items-center gap-2"
+                >
+                  <QrCode className="w-4 h-4" />
+                  Código QR
+                </Button>
+                
+                {/* Auth Stack Button - only show for own profile */}
+                {isOwnProfile && (
+                  <UserButton />
+                )}
+              </div>
+            </div>
+
+            {/* Desktop Stats Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+              <Card className="bg-chart-1/10 border-chart-1/20">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-chart-1 mb-1">#{userRank}</div>
+                  <div className="text-sm text-muted-foreground">RANKING</div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-chart-2/10 border-chart-2/20">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-chart-2 mb-1">{totalMatches}</div>
+                  <div className="text-sm text-muted-foreground">TOTAL MATCHES</div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-chart-3/10 border-chart-3/20">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-chart-3 mb-1">{userProfile.wins}</div>
+                  <div className="text-sm text-muted-foreground">WINS</div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-chart-4/10 border-chart-4/20">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-chart-4 mb-1">{ttpYears}</div>
+                  <div className="text-sm text-muted-foreground">TTP YEARS</div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
@@ -180,27 +257,27 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
       />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="mb-8">
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="matches">Matches</TabsTrigger>
+          <TabsList className="mb-4 sm:mb-8 grid w-full grid-cols-2">
+            <TabsTrigger value="profile" className="text-sm">Profile</TabsTrigger>
+            <TabsTrigger value="matches" className="text-sm">Matches</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="profile" className="space-y-6">
+          <TabsContent value="profile" className="space-y-4 sm:space-y-6">
             {/* Game Preferences */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
+              <CardHeader className="pb-3 sm:pb-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <User className="w-4 h-4 sm:w-5 sm:h-5" />
                   Game Preferences
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4 sm:space-y-6">
                 {/* Display Name */}
                 <div>
-                  <Label className="flex items-center gap-2 mb-2">
-                    <User className="w-4 h-4" />
+                  <Label className="flex items-center gap-2 mb-2 text-sm">
+                    <User className="w-3 h-3 sm:w-4 sm:h-4" />
                     Display Name
                   </Label>
                   {isEditing ? (
@@ -211,9 +288,10 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
                         displayName: e.target.value
                       }))}
                       placeholder="Enter your display name"
+                      className="text-sm"
                     />
                   ) : (
-                    <div className="p-3 bg-muted rounded-md">
+                    <div className="p-2 sm:p-3 bg-muted rounded-md text-sm">
                       {user.displayName}
                     </div>
                   )}
@@ -221,7 +299,7 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
 
                 {/* Avatar URL */}
                 <div>
-                  <Label className="mb-2 block">Avatar URL</Label>
+                  <Label className="mb-2 block text-sm">Avatar URL</Label>
                   {isEditing ? (
                     <Input
                       value={formData.avatarUrl}
@@ -230,89 +308,165 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
                         avatarUrl: e.target.value
                       }))}
                       placeholder="Enter avatar URL (optional)"
+                      className="text-sm"
                     />
                   ) : (
-                    <div className="p-3 bg-muted rounded-md">
-                      {user.avatarUrl || 'No avatar URL'}
+                    <div className="p-2 sm:p-3 bg-muted rounded-md text-sm break-all">
+                      {user.avatarUrl || (
+                        <span className="text-muted-foreground italic">No avatar URL</span>
+                      )}
                     </div>
                   )}
                 </div>
 
-                {/* Favorite Class */}
-                <div>
-                  <Label className="flex items-center gap-2 mb-2">
-                    <Heart className="w-4 h-4" />
-                    Favorite Class
-                  </Label>
-                  {isEditing ? (
-                    <Select 
-                      value={formData.favoriteClass || 'none'} 
-                      onValueChange={(value) => setFormData(prev => ({ 
-                        ...prev, 
-                        favoriteClass: value === 'none' ? '' : value
-                      }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choose your favorite class" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">No preference</SelectItem>
-                        {classes.map((cls) => (
-                          <SelectItem key={cls.id} value={cls.name}>
-                            {cls.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="p-3 bg-muted rounded-md">
-                      {userProfile.favoriteClass || 'No preference'}
-                    </div>
-                  )}
+                {/* Mobile compact layout for preferences */}
+                <div className="sm:hidden space-y-3">
+                  {/* Favorite Class */}
+                  <div>
+                    <Label className="flex items-center gap-2 mb-2 text-sm">
+                      <Heart className="w-3 h-3" />
+                      Favorite Class
+                    </Label>
+                    {isEditing ? (
+                      <Select 
+                        value={formData.favoriteClass || 'none'} 
+                        onValueChange={(value) => setFormData(prev => ({ 
+                          ...prev, 
+                          favoriteClass: value === 'none' ? '' : value
+                        }))}
+                      >
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder="Choose favorite class" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No preference</SelectItem>
+                          {classes.map((cls) => (
+                            <SelectItem key={cls.id} value={cls.name}>
+                              {cls.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <div className="p-2 bg-muted rounded-md text-sm">
+                        {userProfile.favoriteClass || 'No preference'}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Favorite Game Mode */}
+                  <div>
+                    <Label className="flex items-center gap-2 mb-2 text-sm">
+                      <Gamepad2 className="w-3 h-3" />
+                      Favorite Game Mode
+                    </Label>
+                    {isEditing ? (
+                      <Select 
+                        value={formData.favoriteGameMode || 'none'} 
+                        onValueChange={(value) => setFormData(prev => ({ 
+                          ...prev, 
+                          favoriteGameMode: value === 'none' ? '' : value
+                        }))}
+                      >
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder="Choose favorite mode" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No preference</SelectItem>
+                          {gameModes.map((mode) => (
+                            <SelectItem key={mode.id} value={mode.name}>
+                              {mode.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <div className="p-2 bg-muted rounded-md text-sm">
+                        {userProfile.favoriteGameMode || 'No preference'}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                {/* Favorite Game Mode */}
-                <div>
-                  <Label className="flex items-center gap-2 mb-2">
-                    <Gamepad2 className="w-4 h-4" />
-                    Favorite Game Mode
-                  </Label>
-                  {isEditing ? (
-                    <Select 
-                      value={formData.favoriteGameMode || 'none'} 
-                      onValueChange={(value) => setFormData(prev => ({ 
-                        ...prev, 
-                        favoriteGameMode: value === 'none' ? '' : value
-                      }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choose your favorite mode" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">No preference</SelectItem>
-                        {gameModes.map((mode) => (
-                          <SelectItem key={mode.id} value={mode.name}>
-                            {mode.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="p-3 bg-muted rounded-md">
-                      {userProfile.favoriteGameMode || 'No preference'}
-                    </div>
-                  )}
+                {/* Desktop layout for preferences */}
+                <div className="hidden sm:block space-y-6">
+                  {/* Favorite Class */}
+                  <div>
+                    <Label className="flex items-center gap-2 mb-2">
+                      <Heart className="w-4 h-4" />
+                      Favorite Class
+                    </Label>
+                    {isEditing ? (
+                      <Select 
+                        value={formData.favoriteClass || 'none'} 
+                        onValueChange={(value) => setFormData(prev => ({ 
+                          ...prev, 
+                          favoriteClass: value === 'none' ? '' : value
+                        }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose your favorite class" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No preference</SelectItem>
+                          {classes.map((cls) => (
+                            <SelectItem key={cls.id} value={cls.name}>
+                              {cls.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <div className="p-3 bg-muted rounded-md">
+                        {userProfile.favoriteClass || 'No preference'}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Favorite Game Mode */}
+                  <div>
+                    <Label className="flex items-center gap-2 mb-2">
+                      <Gamepad2 className="w-4 h-4" />
+                      Favorite Game Mode
+                    </Label>
+                    {isEditing ? (
+                      <Select 
+                        value={formData.favoriteGameMode || 'none'} 
+                        onValueChange={(value) => setFormData(prev => ({ 
+                          ...prev, 
+                          favoriteGameMode: value === 'none' ? '' : value
+                        }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose your favorite mode" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No preference</SelectItem>
+                          {gameModes.map((mode) => (
+                            <SelectItem key={mode.id} value={mode.name}>
+                              {mode.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <div className="p-3 bg-muted rounded-md">
+                        {userProfile.favoriteGameMode || 'No preference'}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Action Buttons - only show for own profile */}
                 {isOwnProfile && (
-                  <div className="flex gap-2 pt-4">
+                  <div className="flex flex-col sm:flex-row gap-2 pt-4">
                     {isEditing ? (
                       <>
                         <Button 
                           onClick={handleSave}
                           disabled={isLoading}
                           className="flex-1"
+                          size="sm"
                         >
                           {isLoading ? 'Saving...' : 'Save Changes'}
                         </Button>
@@ -320,12 +474,13 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
                           variant="outline" 
                           onClick={handleCancel}
                           disabled={isLoading}
+                          size="sm"
                         >
                           Cancel
                         </Button>
                       </>
                     ) : (
-                      <Button onClick={() => setIsEditing(true)} className="flex-1">
+                      <Button onClick={() => setIsEditing(true)} className="flex-1" size="sm">
                         Edit Preferences
                       </Button>
                     )}
@@ -335,16 +490,16 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
             </Card>
           </TabsContent>
 
-          <TabsContent value="matches" className="space-y-6">
+          <TabsContent value="matches" className="space-y-4 sm:space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Trophy className="w-5 h-5" />
+              <CardHeader className="pb-3 sm:pb-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <Trophy className="w-4 h-4 sm:w-5 sm:h-5" />
                   Match History
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground text-center py-8">
+                <p className="text-muted-foreground text-center py-6 sm:py-8 text-sm">
                   Match history feature coming soon...
                 </p>
               </CardContent>
