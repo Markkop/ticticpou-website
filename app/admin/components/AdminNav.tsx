@@ -23,6 +23,11 @@ export function AdminNav({ userRole }: AdminNavProps) {
       roles: ['super-admin', 'ambassador'],
     },
     {
+      href: '/admin/classes',
+      label: 'Classes',
+      roles: ['super-admin'],
+    },
+    {
       href: '/admin/users',
       label: 'Users',
       roles: ['super-admin'],

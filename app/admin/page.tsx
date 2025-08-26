@@ -23,12 +23,20 @@ export default async function AdminDashboard() {
               Create New Match
             </a>
             {dbUser.role === 'super-admin' && (
-              <a
-                href="/admin/users"
-                className="block w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded"
-              >
-                Manage Users
-              </a>
+              <>
+                <a
+                  href="/admin/classes"
+                  className="block w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded"
+                >
+                  Gerenciar Classes
+                </a>
+                <a
+                  href="/admin/users"
+                  className="block w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded"
+                >
+                  Manage Users
+                </a>
+              </>
             )}
           </div>
         </div>
