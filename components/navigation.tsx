@@ -87,8 +87,9 @@ function DesktopNav({ pathname }: { pathname: string | null }) {
           const active = pathname === l.href || (l.href !== "/" && pathname?.startsWith(l.href));
           return (
             <NavigationMenuItem key={l.href}>
-              <Link href={l.href} legacyBehavior passHref>
-                <NavigationMenuLink
+              <NavigationMenuLink asChild>
+                <Link
+                  href={l.href}
                   className={cn(
                     navigationMenuTriggerStyle(),
                     "px-3",
@@ -97,8 +98,8 @@ function DesktopNav({ pathname }: { pathname: string | null }) {
                   aria-current={active ? "page" : undefined}
                 >
                   {l.label}
-                </NavigationMenuLink>
-              </Link>
+                </Link>
+              </NavigationMenuLink>
             </NavigationMenuItem>
           );
         })}
