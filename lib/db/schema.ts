@@ -13,6 +13,7 @@ export const users = pgTable('users', {
   wins: integer('wins').default(0).notNull(),
   losses: integer('losses').default(0).notNull(),
   isAmbassador: boolean('is_ambassador').default(false).notNull(),
+  role: text('role').default('user').notNull(), // 'user', 'ambassador', 'super-admin'
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

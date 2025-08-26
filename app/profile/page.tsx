@@ -22,6 +22,7 @@ export default async function ProfilePage() {
       wins: 0,
       losses: 0,
       isAmbassador: false,
+      role: 'user',
     });
   }
   
