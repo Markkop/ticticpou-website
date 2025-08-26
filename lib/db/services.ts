@@ -106,7 +106,7 @@ export const usersService = {
 // Matches service
 export const matchesService = {
   async getAll() {
-    return await db.select({
+    const matchesData = await db.select({
       id: matches.id,
       ambassadorId: matches.ambassadorId,
       gameMode: matches.gameMode,
@@ -114,12 +114,41 @@ export const matchesService = {
       playedAt: matches.playedAt,
       createdAt: matches.createdAt,
       ambassador: {
+        id: users.id,
         username: users.username,
       }
     })
     .from(matches)
     .leftJoin(users, eq(matches.ambassadorId, users.id))
     .orderBy(desc(matches.playedAt));
+
+    // Get participants for each match
+    const enrichedMatches = await Promise.all(
+      matchesData.map(async (match) => {
+        const participants = await db.select({
+          userId: matchParticipants.userId,
+          username: users.username,
+          avatarUrl: users.avatarUrl,
+          className: matchParticipants.className,
+          placement: matchParticipants.placement,
+          isWinner: matchParticipants.isWinner,
+          eliminations: matchParticipants.eliminations,
+          eloChange: matchParticipants.eloChange,
+          eloAfter: matchParticipants.eloAfter,
+        })
+        .from(matchParticipants)
+        .leftJoin(users, eq(matchParticipants.userId, users.id))
+        .where(eq(matchParticipants.matchId, match.id))
+        .orderBy(matchParticipants.placement);
+
+        return {
+          ...match,
+          participants
+        };
+      })
+    );
+
+    return enrichedMatches;
   },
 
   async getById(id: string) {

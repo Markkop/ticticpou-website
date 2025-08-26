@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Heart, Gamepad2, Trophy } from 'lucide-react';
+import { User, Heart, Gamepad2, Trophy, QrCode } from 'lucide-react';
 import { UserButton } from '@stackframe/stack';
 import type { User as DbUser, Class, GameMode } from '@/lib/db';
+import QRCodeModal from './QRCodeModal';
 
 interface StackAuthUser {
   id: string;
@@ -32,6 +33,7 @@ interface ProfileClientProps {
 export default function ProfileClient({ user, userProfile, classes, gameModes, userRank, totalMatches, ttpYears, isOwnProfile }: ProfileClientProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
   const [formData, setFormData] = useState({
     favoriteClass: userProfile.favoriteClass || '',
     favoriteGameMode: userProfile.favoriteGameMode || ''
@@ -108,12 +110,23 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
               <p className="text-muted-foreground">@{userProfile.username}</p>
             </div>
 
-            {/* Auth Stack Button - only show for own profile */}
-            {isOwnProfile && (
-              <div className="flex items-center gap-4">
+            {/* Actions */}
+            <div className="flex items-center gap-4">
+              {/* QR Code Button - always visible */}
+              <Button
+                variant="outline"
+                onClick={() => setShowQRModal(true)}
+                className="flex items-center gap-2"
+              >
+                <QrCode className="w-4 h-4" />
+                Código QR
+              </Button>
+              
+              {/* Auth Stack Button - only show for own profile */}
+              {isOwnProfile && (
                 <UserButton />
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Stats Cards */}
@@ -148,6 +161,17 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
           </div>
         </div>
       </div>
+
+      {/* QR Code Modal */}
+      <QRCodeModal
+        isOpen={showQRModal}
+        onClose={() => setShowQRModal(false)}
+        userData={{
+          userId: userProfile.id,
+          username: userProfile.username,
+          avatarUrl: user.profileImageUrl || undefined,
+        }}
+      />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">

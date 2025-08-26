@@ -3,6 +3,8 @@ import { ArrowLeft, Users, MapPin, Trophy } from 'lucide-react';
 import { Navigation } from '@/components/navigation';
 import { matchesService } from '@/lib/db/services';
 import MatchesClient from './components/MatchesClient';
+import { stackServerApp } from '@/stack';
+import { getUserByStackId } from '@/lib/data/users';
 
 interface Match {
   id: string;
@@ -12,15 +14,33 @@ interface Match {
   playedAt: Date;
   createdAt: Date;
   ambassador: {
+    id: string;
     username: string;
   } | null;
+  participants?: {
+    userId: string;
+    username: string | null;
+    avatarUrl: string | null;
+    className: string;
+    placement: number;
+    isWinner: boolean;
+    eliminations: number;
+    eloChange: number;
+    eloAfter: number;
+  }[];
 }
 
 interface MatchesPageProps {
   matches: Match[];
+  currentUserData?: {
+    id: string;
+    username: string;
+    isAmbassador: boolean;
+    role: 'user' | 'ambassador' | 'super-admin';
+  } | null;
 }
 
-function MatchesPageComponent({ matches }: MatchesPageProps) {
+function MatchesPageComponent({ matches, currentUserData }: MatchesPageProps) {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -73,7 +93,7 @@ function MatchesPageComponent({ matches }: MatchesPageProps) {
           </div>
         </div>
 
-        <MatchesClient matches={matches} />
+        <MatchesClient matches={matches} currentUserData={currentUserData} />
 
         {/* Instructions */}
         <div className="mt-8 bg-card border border-border rounded-lg p-6 shadow-sm">
@@ -118,5 +138,23 @@ export async function generateMetadata() {
 export default async function MatchesServerPage() {
   const matches = await matchesService.getAll();
   
-  return <MatchesPageComponent matches={matches} />;
+  let currentUserData = null;
+  try {
+    const stackUser = await stackServerApp.getUser();
+    if (stackUser) {
+      const dbUser = await getUserByStackId(stackUser.id);
+      if (dbUser) {
+        currentUserData = {
+          id: dbUser.id,
+          username: dbUser.username,
+          isAmbassador: dbUser.isAmbassador,
+          role: dbUser.role as 'user' | 'ambassador' | 'super-admin',
+        };
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching user:', error);
+  }
+  
+  return <MatchesPageComponent matches={matches} currentUserData={currentUserData} />;
 }
