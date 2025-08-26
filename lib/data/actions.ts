@@ -103,7 +103,7 @@ export const actions: ActionData[] = [
     id: 'uh',
     name: 'Uh',
     category: 'special',
-    className: 'Samurai',
+    className: 'Samurai/Espadachim',
     description: 'Carrega o contra-ataque do Samurai.',
     sound: 'Uh!',
     gesture: 'Coloca mãos do lado da cintura como se segurasse espada',
@@ -115,7 +115,7 @@ export const actions: ActionData[] = [
     id: 'katchim',
     name: 'Katchim',
     category: 'special',
-    className: 'Samurai',
+    className: 'Samurai/Espadachim',
     description: 'Contra-ataque que reflete qualquer ataque recebido.',
     sound: 'Katchim!',
     gesture: 'Saca espada para o alto',
@@ -155,14 +155,14 @@ export const actions: ActionData[] = [
     name: 'Tiro Duplo',
     category: 'special',
     className: 'Cangaceiro',
-    description: 'Atira em dois alvos simultaneamente ou em sequência.',
+    description: 'Atira em dois alvos simultaneamente no mesmo turno ou em duas rodadas diferentes.'
     sound: 'Pou! ou PouPou',
     gesture: 'Mira com uma mão em cada alvo',
     requirements: ['Ter 2 balas carregadas'],
     effects: [
-      'Pode atirar em dois alvos diferentes',
-      'Ou atirar duas vezes em rodadas diferentes',
-      'Gasta as 2 balas'
+      'Pode atirar em dois alvos diferentes no mesmo turno',
+      'Ou atirar duas vezes em rodadas diferentes', 
+      'Tiro duplo gasta as 2 balas de uma vez'
     ],
     interactions: [
       'Se um alvo for Samurai refletindo: Cangaceiro morre, mas segundo alvo ainda recebe tiro'
@@ -309,7 +309,9 @@ export const actions: ActionData[] = [
       'Se ambos fazem terceiro finalizador juntos, ambos perdem'
     ],
     interactions: [
-      'Assassino recupera arma (Tic Tic e Pou) em duelos 1x1'
+      'Assassino recupera arma (Tic Tic e Pou) em duelos 1x1',
+      'Samurai pode refletir finalizadores',
+      'Caso ambos façam terceiro finalizador juntos, ambos perdem'
     ],
     vulnerable: true
   }

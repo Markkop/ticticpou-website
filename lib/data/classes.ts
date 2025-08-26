@@ -38,7 +38,7 @@ export const classes: ClassData[] = [
   },
   {
     id: 'samurai',
-    name: 'Samurai',
+    name: 'Samurai/Espadachim',
     category: 'base',
     description: 'Classe defensiva que pode contra-atacar, refletindo qualquer ataque recebido.',
     specialLoadSound: 'Uh!',
@@ -86,22 +86,23 @@ export const classes: ClassData[] = [
     id: 'cangaceiro',
     name: 'Cangaceiro',
     category: 'base',
-    description: 'Única classe que pode ter duas balas, podendo atirar duas vezes ou em dois alvos simultaneamente.',
+    description: 'Única classe que pode ter duas balas, podendo atirar duas vezes em rodadas diferentes ou em dois alvos no mesmo turno.'
     specialLoadSound: undefined,
     specialUseSound: 'Pou! ou PouPou',
     specialLoadGesture: 'Recarregar normalmente duas vezes',
     specialUseGesture: 'Pode mirar em dois alvos com cada mão',
     maxBullets: 2,
     interactions: [
-      'Pode atirar em duas pessoas ao mesmo tempo ou em duas rodadas diferentes',
-      'Para tiro duplo, mira com uma mão em cada alvo',
+      'Pode atirar em duas pessoas ao mesmo tempo gastando as duas balas',
+      'Ou atirar normalmente em duas rodadas diferentes',
+      'Para tiro duplo, mira com uma mão em cada alvo, dizendo "Pou" ou "PouPou"',
       'Se um dos alvos for Samurai refletindo, o Cangaceiro morre mas o outro alvo ainda recebe o tiro'
     ],
     details: [
       'Possui as 3 ações básicas: defender, recarregar e atirar',
-      'Deve carregar duas balas separadamente com "Tic Tic"',
+      'Deve carregar duas balas separadamente com "Tic Tic" (não precisam ser seguidas)',
       'Tiro duplo gasta as duas balas de uma vez',
-      'Demonstra classe mantendo as mãos como se recarregasse'
+      'Demonstra classe mantendo as mãos apontadas pra cima como se estivesse recarregando'
     ]
   },
   {
@@ -141,7 +142,8 @@ export const classes: ClassData[] = [
       'Apunhalada só mata quem estiver defendendo',
       'Pode atacar apenas jogadores ao seu lado',
       'Quando um jogador ao lado morre, o próximo vivo vira alvo',
-      'Em 1x1, recupera a arma (Tic Tic e Pou)'
+      'Em 1x1, recupera a arma (Tic Tic e Pou)',
+      'Classe mais fraca em 1x1 - basta rival nunca defender para ganhar'
     ],
     details: [
       'Não possui arma, apenas defesa e adaga',

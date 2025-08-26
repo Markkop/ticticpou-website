@@ -27,8 +27,8 @@ export const gameModes: GameModeData[] = [
       'Todos começam com 1 vida e 0 balas'
     ],
     specialFeatures: [
-      'Classes base: Mago, Samurai, Padre, Cangaceiro',
-      'Noviço opcional para iniciantes',
+      'Classes base: Mago, Samurai/Espadachim, Padre, Cangaceiro',
+      'Noviço opcional para iniciantes (pode usar apenas 1-2 vezes)',
       'Finalizador para duelos 1x1'
     ]
   },
@@ -43,14 +43,16 @@ export const gameModes: GameModeData[] = [
     rules: [
       'Todos começam com 2 vidas e sem classe',
       'Escolha de classe ao tirar uma vida de outro jogador',
-      'Player pode esperar para escolher a classe',
-      'Tirar vida extra do Padre também libera escolha'
+      'Jogador pode esperar para escolher a classe',
+      'Tirar vida extra do Padre também libera escolha',
+      'Se fizer Tic Tic antes de escolher, não pode mais ser Assassino ou Kabalista'
     ],
     specialFeatures: [
-      'Incentiva agressividade no início',
+      'Incentiva agressividade no início da partida',
       'Sensação de evolução como RPG',
       'Demonstrar classe inicial com posição de defesa',
-      'Cangaceiro é escolhido carregando segunda vez'
+      'Cangaceiro é escolhido fazendo Tic Tic uma segunda vez',
+      'Ideia de evolução de classes (Mago>Sábio, etc) descartada por complexidade'
     ]
   },
   {
@@ -142,12 +144,13 @@ export const mechanics = [
     name: 'Interações entre Classes',
     description: 'Regras específicas de como as classes interagem entre si.',
     rules: [
-      'Mago vs Samurai: Katchim mata Mago e anula Kadabra',
-      'Assassino vs Samurai: ambos gastam carregamento, ninguém morre',
-      'Cangaceiro vs Samurai: tiro duplo mata Samurai, mas segundo alvo ainda é atingido',
-      'Dois Magos: se usam Kadabra juntos, ambos morrem e ninguém mais',
-      'Padre vulnerável: perde vida extra se atacado durante reza',
-      'Pacificador: se salvar alguém cancelando, ganha vida extra'
+      'Mago vs Samurai: Katchim mata Mago e anula Kadabra, salvando outros jogadores',
+      'Assassino vs Samurai: ambos gastam carregamento, ninguém morre (apunhalada não funciona contra reflexão)',
+      'Cangaceiro vs Samurai: se Samurai refletir um tiro, Cangaceiro morre mas segundo alvo ainda é atingido',
+      'Dois Magos: se usam Kadabra juntos, ambos morrem e ninguém mais (explosões se cancelam)',
+      'Padre vulnerável: perde vida extra se atacado durante segunda reza',
+      'Pacificador: se salvar alguém da morte cancelando ações, ganha vida extra',
+      'Assassino vs Mago durante Kadabra: Mago não morre (não defendendo), Assassino morre (vulnerável)'
     ]
   },
   {
