@@ -5,6 +5,7 @@ import { stackServerApp } from "../stack";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { ConditionalNavigation } from "@/components/conditional-navigation";
+import { Footer } from "@/components/footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -36,6 +37,7 @@ export default function RootLayout({
           <ConditionalNavigation />
         </Suspense>
         {children}
+        <Footer />
         <Toaster richColors position="bottom-right" />
       </StackTheme></StackProvider></body>
     </html>
