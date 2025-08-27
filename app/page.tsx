@@ -85,6 +85,7 @@ export default function Home() {
               </iframe>
             </div>
               <p className="text-xs text-muted-foreground md:hidden">On mobile, expand and adjust your phone orientation</p>
+              <p className="text-xs text-muted-foreground md:hidden">Or try it on <a href="https://mark17.itch.io/ticticpou-3d" className="text-primary">itch.io</a></p>
           </div>
         </section>
       </main>
