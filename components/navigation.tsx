@@ -34,7 +34,6 @@ const links: NavLink[] = [
   { href: "/", label: "Início" },
   { href: "/classes", label: "Classes" },
   { href: "/modos", label: "Modos de Jogo" },
-  { href: "/acoes", label: "Ações" },
   { href: "/ranking", label: "Ranking" },
   { href: "/partidas", label: "Partidas" },
 ];

@@ -58,34 +58,6 @@ function GameModesPageComponent({ gameModes }: GameModesPageProps) {
         </div>
 
         <GameModesClient gameModes={gameModes} />
-
-        {/* Learning Path */}
-        <section className="mt-12 bg-card border border-border rounded-lg p-6 shadow-sm">
-          <h3 className="text-xl font-semibold text-card-foreground mb-4">📚 Caminho de Aprendizagem</h3>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="w-8 h-8 bg-chart-2 rounded-full flex items-center justify-center text-white font-bold mb-3 mx-auto">1</div>
-              <h4 className="font-medium mb-2">Jogo Base</h4>
-              <p className="text-sm text-muted-foreground">
-                Aprenda as 3 ações básicas: defender, recarregar e atirar
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold mb-3 mx-auto">2</div>
-              <h4 className="font-medium mb-2">Classes Base</h4>
-              <p className="text-sm text-muted-foreground">
-                Adicione as 4 classes base + Noviço no modo Clássico
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white font-bold mb-3 mx-auto">3</div>
-              <h4 className="font-medium mb-2">Expansão</h4>
-              <p className="text-sm text-muted-foreground">
-                Explore classes extras, modos variantes e mecânicas avançadas
-              </p>
-            </div>
-          </div>
-        </section>
       </main>
     </div>
   );
