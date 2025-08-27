@@ -20,7 +20,7 @@ const relacionadoLinks = [
 
 const informacoesLinks = [
   { href: "mailto:me@markkop.dev", label: "Entrar em contato", external: true },
-  { href: "#", label: "Política de Privacidade", external: false },
+  { href: "/politica-de-privacidade", label: "Política de Privacidade", external: false },
   { href: "/admin", label: "Admin", external: false },
 ];
 
