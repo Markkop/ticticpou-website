@@ -184,12 +184,11 @@ export default function ProfileClient({ user, userProfile, classes, gameModes, u
               {/* User Info */}
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-muted-foreground text-sm">RANK #{userRank}</span>
                   <h1 className="text-2xl font-bold text-foreground">
                     {user.displayName}
                   </h1>
                 </div>
-                <p className="text-muted-foreground">ID: {user.publicId}</p>
+                <p className="text-muted-foreground text-xs">PID: {user.publicId}</p>
               </div>
 
               {/* Actions */}

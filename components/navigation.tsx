@@ -121,7 +121,7 @@ function MobileNav({ pathname, user }: { pathname: string | null; user: User | n
           <SheetTitle className="text-base text-primary font-bold">Tic Tic Pou</SheetTitle>
         </SheetHeader>
         <Separator />
-        <nav className="flex flex-col p-2">
+        <nav className="flex flex-col gap-1 p-2">
           {links.map((l) => {
             const active = pathname === l.href || (l.href !== "/" && pathname?.startsWith(l.href));
             return (
@@ -129,7 +129,7 @@ function MobileNav({ pathname, user }: { pathname: string | null; user: User | n
                 key={l.href}
                 href={l.href}
                 className={cn(
-                  "rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+                  "rounded-lg px-3 py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
                   active && "bg-accent text-accent-foreground"
                 )}
                 aria-current={active ? "page" : undefined}
