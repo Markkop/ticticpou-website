@@ -35,7 +35,7 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
     maxBullets: classData.maxBullets || 1,
     heartNumber: classData.heartNumber || 1,
     classIcon: classData.classIcon || '',
-    specialIcon: classData.specialIcon || '',
+    specialIcon: classData.specialIcon ?? '',
     specialText: classData.specialText || '',
     orderPriority: classData.orderPriority || 0,
     imageUrl: classData.imageUrl || '',
@@ -44,15 +44,16 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
   const [newInteraction, setNewInteraction] = useState('');
   
   // Helper function to determine special icon type
-  const getSpecialIconType = (specialIcon: string) => {
+  const getSpecialIconType = (specialIcon: string | null | undefined) => {
     if (specialIcon === '__HEART_SVG__') return 'heart';
     if (specialIcon === '__BULLET_SVG__') return 'bullet';
-    if (!specialIcon) return 'two-bullets'; // Empty for two bullets
+    if (specialIcon === '__DOUBLE_BULLET__') return 'two-bullets';
+    if (!specialIcon) return 'custom'; // Empty/null shows no icon, defaults to custom
     return 'custom';
   };
   
   const [specialIconType, setSpecialIconType] = useState<'heart' | 'bullet' | 'two-bullets' | 'custom'>(
-    getSpecialIconType(formData.specialIcon || '')
+    getSpecialIconType(formData.specialIcon)
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -77,7 +78,7 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
         newSpecialIcon = '__BULLET_SVG__'; // Special marker for bullet SVG
         break;
       case 'two-bullets':
-        newSpecialIcon = ''; // Empty for two bullets
+        newSpecialIcon = '__DOUBLE_BULLET__'; // Special marker for double bullets
         break;
       case 'custom':
         // Keep existing custom emoji or use default

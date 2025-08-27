@@ -26,14 +26,17 @@ export default function ClassCard({ classData, hideTitle }: ClassCardProps) {
     if (specialIcon === '__BULLET_SVG__') {
       return { useHeartSvg: false, useBulletSvg: true, useTwoBulletSvgs: false, emoji: null };
     }
-    
-    // Handle empty string for two bullets (Cangaceiro style)
-    if (specialIcon === '' && classData.maxBullets && classData.maxBullets > 1) {
+    if (specialIcon === '__DOUBLE_BULLET__') {
       return { useHeartSvg: false, useBulletSvg: false, useTwoBulletSvgs: true, emoji: null };
     }
     
-    // Custom emoji
-    return { useHeartSvg: false, useBulletSvg: false, useTwoBulletSvgs: false, emoji: specialIcon };
+    // Custom emoji (if specialIcon has content)
+    if (specialIcon) {
+      return { useHeartSvg: false, useBulletSvg: false, useTwoBulletSvgs: false, emoji: specialIcon };
+    }
+    
+    // No icon (empty/null specialIcon)
+    return { useHeartSvg: false, useBulletSvg: false, useTwoBulletSvgs: false, emoji: null };
   };
 
   const getClassImage = () => {
@@ -151,9 +154,7 @@ export default function ClassCard({ classData, hideTitle }: ClassCardProps) {
                 </div>
               ) : specialInfo.emoji ? (
                 <span className="text-lg">{specialInfo.emoji}</span>
-              ) : (
-                <span className="text-xs text-muted-foreground">Sem ícone</span>
-              )}
+              ) : null}
               <span className="text-xs font-medium">{classData.specialText || 'Especial'}</span>
             </div>
           </div>
