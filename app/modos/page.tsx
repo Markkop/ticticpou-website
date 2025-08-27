@@ -39,21 +39,21 @@ function GameModesPageComponent({ gameModes }: GameModesPageProps) {
           </div>
           <div className="bg-card border border-border rounded-lg p-4 text-center shadow-sm">
             <div className="text-2xl font-bold text-foreground mb-1">
-              {Math.min(...gameModes.map(m => m.minPlayers))}
+              {gameModes.filter(m => m.category === 'casual').length}
             </div>
-            <div className="text-sm text-muted-foreground">Min. Jogadores</div>
+            <div className="text-sm text-muted-foreground">Modos Casuais</div>
           </div>
           <div className="bg-card border border-border rounded-lg p-4 text-center shadow-sm">
             <div className="text-2xl font-bold text-foreground mb-1">
-              {Math.max(...gameModes.map(m => m.maxPlayers).filter((max): max is number => max !== null))}
+              {gameModes.filter(m => m.category === 'competitivo').length}
             </div>
-            <div className="text-sm text-muted-foreground">Max. Jogadores</div>
+            <div className="text-sm text-muted-foreground">Modos Competitivos</div>
           </div>
           <div className="bg-card border border-border rounded-lg p-4 text-center shadow-sm">
             <div className="text-2xl font-bold text-foreground mb-1">
-              {gameModes.filter(m => (m.difficulty || 'iniciante') === 'iniciante').length}
+              {gameModes.filter(m => m.rankingType).length}
             </div>
-            <div className="text-sm text-muted-foreground">Para Iniciantes</div>
+            <div className="text-sm text-muted-foreground">Com Ranking</div>
           </div>
         </div>
 

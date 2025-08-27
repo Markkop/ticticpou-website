@@ -90,14 +90,12 @@ export const gameModes = pgTable('game_modes', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: text('name').unique().notNull(),
   description: text('description').notNull(),
-  rules: jsonb('rules').$type<string[]>(),
   minPlayers: integer('min_players').default(3).notNull(),
   maxPlayers: integer('max_players'),
-  difficulty: text('difficulty').default('iniciante').notNull(),
-  category: text('category').default('classic').notNull(),
-  specialFeatures: jsonb('special_features').$type<string[]>(),
-  newClasses: jsonb('new_classes').$type<string[]>(),
+  category: text('category', { enum: ['casual', 'competitivo'] }).default('casual').notNull(),
+  rankingType: text('ranking_type'), // 'classic_4p', 'normal_5p', 'free_6plus', 'equipe' - for competitive modes
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 // Relations

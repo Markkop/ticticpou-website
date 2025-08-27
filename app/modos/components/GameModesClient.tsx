@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import Link from 'next/link';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, Users, Target, Zap } from 'lucide-react';
+import { Users, LandPlot } from 'lucide-react';
 import type { GameMode } from '@/lib/db';
 
 interface GameModeCardProps {
@@ -12,128 +12,65 @@ interface GameModeCardProps {
 }
 
 function GameModeCard({ mode }: GameModeCardProps) {
-  const [isOpen, setIsOpen] = useState(false);
 
-  const getDifficultyBadge = (difficulty: string) => {
-    const styles: Record<string, string> = {
-      iniciante: 'bg-chart-2/20 text-green-700',
-      intermediario: 'bg-chart-5/20 text-yellow-700', 
-      avancado: 'bg-destructive/20 text-red-700'
+  const getPlayersText = (min: number, max: number | null) => {
+    if (max === null) {
+      return `${min}+ jogadores`;
+    }
+    if (min === max) {
+      return `${min} jogadores`;
+    }
+    return `${min} - ${max} jogadores`;
+  };
+
+  const getRankingLink = (rankingType: string | null) => {
+    if (!rankingType) return null;
+    
+    // Map ranking types to tabs
+    const tabMap: Record<string, string> = {
+      'classic_4p': '4p',
+      'normal_5p': '5p', 
+      'free_6plus': '6p',
+      'equipe': 'equipe'
     };
     
-    const labels: Record<string, string> = {
-      iniciante: 'Iniciante',
-      intermediario: 'Intermediário',
-      avancado: 'Avançado'
-    };
-
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[difficulty] || styles.iniciante}`}>
-        {labels[difficulty] || difficulty}
-      </span>
-    );
+    const tab = tabMap[rankingType];
+    return tab ? `/ranking#${tab}` : null;
   };
 
-  const getCategoryIcon = (category: string | null) => {
-    const icons: Record<string, React.ReactElement> = {
-      classic: <Target className="w-4 h-4" />,
-      variant: <Zap className="w-4 h-4" />,
-      team: <Users className="w-4 h-4" />,
-      tournament: <Target className="w-4 h-4" />
-    };
-    return icons[category || 'classic'] || <Target className="w-4 h-4" />;
-  };
+  const rankingLink = getRankingLink(mode.rankingType);
 
   return (
     <Card className="border-border bg-card hover:shadow-md transition-all duration-200 shadow-sm">
-      <CardHeader>
-        <div className="flex items-center justify-between">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="text-primary">
-              {getCategoryIcon(mode.category)}
+              <LandPlot className="w-5 h-5" />
             </div>
-            <CardTitle className="text-xl text-card-foreground">{mode.name}</CardTitle>
-            {getDifficultyBadge(mode.difficulty || 'iniciante')}
+            <div>
+              <h3 className="text-lg font-semibold text-card-foreground">{mode.name}</h3>
+            </div>
           </div>
-          <div className="text-xs text-muted-foreground">
-            {mode.minPlayers}-{mode.maxPlayers || '∞'} jogadores
+          <div className="flex items-center gap-1 text-muted-foreground bg-muted/50 px-2 py-1 rounded-md">
+            <Users className="w-3 h-3" />
+            <span className="text-xs font-medium">
+              {getPlayersText(mode.minPlayers, mode.maxPlayers)}
+            </span>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-muted-foreground">{mode.description}</p>
+      
+      <CardContent className="pt-0">
+        <p className="text-sm text-muted-foreground mb-4">{mode.description}</p>
         
-        {/* Quick Info */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-primary" />
-            <span className="text-sm">
-              {mode.minPlayers}{mode.maxPlayers ? `-${mode.maxPlayers}` : '+'} jogadores
-            </span>
-          </div>
-          <div className="text-sm text-muted-foreground">
-            {(mode.category || 'classic') === 'classic' && '🎯 Clássico'}
-            {(mode.category || 'classic') === 'variant' && '⚡ Variante'}
-            {(mode.category || 'classic') === 'team' && '👥 Equipe'}
-            {(mode.category || 'classic') === 'tournament' && '🏆 Torneio'}
-          </div>
-        </div>
-
-        {/* New Classes Preview */}
-        {mode.newClasses && mode.newClasses.length > 0 && (
-          <div>
-            <h4 className="text-sm font-medium text-card-foreground mb-1">Classes Exclusivas</h4>
-            <div className="flex gap-2 flex-wrap">
-              {mode.newClasses.map((className, index) => (
-                <span 
-                  key={`${className}-${index}`}
-                  className="px-2 py-1 bg-accent/20 text-accent-foreground text-xs rounded-full"
-                >
-                  {className}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Expandable Details */}
-        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm" className="w-full mt-4">
-              Ver Detalhes
-              {isOpen ? <ChevronUp className="w-4 h-4 ml-2" /> : <ChevronDown className="w-4 h-4 ml-2" />}
+        {rankingLink && (
+          <Link href={rankingLink}>
+            <Button variant="outline" size="sm" className="w-full">
+              Ver Ranking
             </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-4 mt-4">
-            {/* Rules */}
-            <div>
-              <h4 className="text-sm font-medium text-card-foreground mb-2">Regras</h4>
-              <ul className="space-y-1">
-                {(mode.rules as string[] || []).map((rule, index) => (
-                  <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                    <span className="text-primary mt-1">•</span>
-                    <span>{rule}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Special Features */}
-            {mode.specialFeatures && mode.specialFeatures.length > 0 && (
-              <div>
-                <h4 className="text-sm font-medium text-card-foreground mb-2">Características Especiais</h4>
-                <ul className="space-y-1">
-                  {mode.specialFeatures.map((feature, index) => (
-                    <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                      <span className="text-accent mt-1">⭐</span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
+          </Link>
+        )}
       </CardContent>
     </Card>
   );
@@ -144,12 +81,16 @@ interface GameModesClientProps {
 }
 
 export default function GameModesClient({ gameModes }: GameModesClientProps) {
-  const [filterDifficulty, setFilterDifficulty] = useState<string>('all');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
   
-  // Filter game modes by difficulty
+  // Group modes by category
+  const casualModes = gameModes.filter(mode => mode.category === 'casual');
+  const competitiveModes = gameModes.filter(mode => mode.category === 'competitivo');
+  
+  // Filter modes based on selected category
   const filteredModes = gameModes.filter(mode => {
-    if (filterDifficulty === 'all') return true;
-    return (mode.difficulty || 'iniciante') === filterDifficulty;
+    if (filterCategory === 'all') return true;
+    return mode.category === filterCategory;
   });
 
   return (
@@ -157,58 +98,76 @@ export default function GameModesClient({ gameModes }: GameModesClientProps) {
       {/* Filters */}
       <div className="flex gap-4 mb-8">
         <Button
-          variant={filterDifficulty === 'all' ? 'default' : 'outline'}
-          onClick={() => setFilterDifficulty('all')}
+          variant={filterCategory === 'all' ? 'default' : 'outline'}
+          onClick={() => setFilterCategory('all')}
           size="sm"
         >
           Todos
         </Button>
         <Button
-          variant={filterDifficulty === 'iniciante' ? 'default' : 'outline'}
-          onClick={() => setFilterDifficulty('iniciante')}
+          variant={filterCategory === 'casual' ? 'default' : 'outline'}
+          onClick={() => setFilterCategory('casual')}
           size="sm"
         >
-          Iniciante
+          Casual
         </Button>
         <Button
-          variant={filterDifficulty === 'intermediario' ? 'default' : 'outline'}
-          onClick={() => setFilterDifficulty('intermediario')}
+          variant={filterCategory === 'competitivo' ? 'default' : 'outline'}
+          onClick={() => setFilterCategory('competitivo')}
           size="sm"
         >
-          Intermediário
-        </Button>
-        <Button
-          variant={filterDifficulty === 'avancado' ? 'default' : 'outline'}
-          onClick={() => setFilterDifficulty('avancado')}
-          size="sm"
-        >
-          Avançado
+          Competitivo
         </Button>
       </div>
 
       {/* Results */}
-      <div className="mb-4">
+      <div className="mb-6">
         <p className="text-sm text-muted-foreground">
           {filteredModes.length} modo{filteredModes.length !== 1 ? 's' : ''} encontrado{filteredModes.length !== 1 ? 's' : ''}
         </p>
       </div>
 
-      {/* Game Modes List */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {filteredModes.length === 0 ? (
-          <div className="col-span-2 text-center py-12">
-            <Target className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">Nenhum modo encontrado</h3>
-            <p className="text-muted-foreground">
-              Tente ajustar o filtro de dificuldade
-            </p>
+      {/* Show sections when "all" is selected */}
+      {filterCategory === 'all' ? (
+        <div className="space-y-8">
+          {/* Casual Section */}
+          <div>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">🎲 Casual</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {casualModes.map((mode) => (
+                <GameModeCard key={mode.id} mode={mode} />
+              ))}
+            </div>
           </div>
-        ) : (
-          filteredModes.map((mode) => (
-            <GameModeCard key={mode.id} mode={mode} />
-          ))
-        )}
-      </div>
+
+          {/* Competitive Section */}
+          <div>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">🏆 Competitivo</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {competitiveModes.map((mode) => (
+                <GameModeCard key={mode.id} mode={mode} />
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* Filtered view */
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredModes.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <LandPlot className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">Nenhum modo encontrado</h3>
+              <p className="text-muted-foreground">
+                Tente ajustar o filtro de categoria
+              </p>
+            </div>
+          ) : (
+            filteredModes.map((mode) => (
+              <GameModeCard key={mode.id} mode={mode} />
+            ))
+          )}
+        </div>
+      )}
     </>
   );
 }

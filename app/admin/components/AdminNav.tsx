@@ -28,6 +28,11 @@ export function AdminNav({ userRole }: AdminNavProps) {
       roles: ['super-admin'],
     },
     {
+      href: '/admin/game-modes',
+      label: 'Game Modes',
+      roles: ['super-admin'],
+    },
+    {
       href: '/admin/users',
       label: 'Users',
       roles: ['super-admin'],
