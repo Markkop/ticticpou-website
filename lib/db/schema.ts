@@ -62,6 +62,12 @@ export const classes = pgTable('classes', {
   isBaseClass: boolean('is_base_class').default(false).notNull(),
   category: text('category'), // 'base', 'extra', 'team'
   maxBullets: integer('max_bullets').default(1),
+  heartNumber: integer('heart_number').default(1).notNull(),
+  classIcon: text('class_icon'),
+  specialIcon: text('special_icon'),
+  specialText: text('special_text'),
+  orderPriority: integer('order_priority').default(0).notNull(),
+  imageUrl: text('image_url'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 

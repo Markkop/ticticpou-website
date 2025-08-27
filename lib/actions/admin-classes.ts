@@ -17,6 +17,12 @@ export interface ClassFormData {
   isBaseClass?: boolean;
   category?: 'base' | 'extra' | 'team';
   maxBullets?: number;
+  heartNumber?: number;
+  classIcon?: string;
+  specialIcon?: string;
+  specialText?: string;
+  orderPriority?: number;
+  imageUrl?: string;
 }
 
 export async function updateClass(id: string, formData: ClassFormData) {
@@ -39,6 +45,12 @@ export async function updateClass(id: string, formData: ClassFormData) {
         isBaseClass: formData.isBaseClass || false,
         category: formData.category || null,
         maxBullets: formData.maxBullets || 1,
+        heartNumber: formData.heartNumber || 1,
+        classIcon: formData.classIcon || null,
+        specialIcon: formData.specialIcon || null,
+        specialText: formData.specialText || null,
+        orderPriority: formData.orderPriority || 0,
+        imageUrl: formData.imageUrl || null,
       })
       .where(eq(classes.id, id));
 
@@ -71,6 +83,12 @@ export async function createClass(formData: ClassFormData) {
       isBaseClass: formData.isBaseClass || false,
       category: formData.category || null,
       maxBullets: formData.maxBullets || 1,
+      heartNumber: formData.heartNumber || 1,
+      classIcon: formData.classIcon || null,
+      specialIcon: formData.specialIcon || null,
+      specialText: formData.specialText || null,
+      orderPriority: formData.orderPriority || 0,
+      imageUrl: formData.imageUrl || null,
     }).returning();
 
     revalidatePath('/admin');

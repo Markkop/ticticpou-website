@@ -7,8 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { EmojiInput } from '@/components/ui/emoji-input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { X, Plus, Save } from 'lucide-react';
+import Image from 'next/image';
 import type { Class } from '@/lib/db';
 import type { ClassFormData } from '@/lib/actions/admin-classes';
 
@@ -31,9 +34,27 @@ export default function ClassEditForm({ initialData, onSave, onCancel, isLoading
     isBaseClass: initialData?.isBaseClass || false,
     category: (initialData?.category as 'base' | 'extra' | 'team') || 'base',
     maxBullets: initialData?.maxBullets || 1,
+    heartNumber: initialData?.heartNumber || 1,
+    classIcon: initialData?.classIcon || '',
+    specialIcon: initialData?.specialIcon || '',
+    specialText: initialData?.specialText || '',
+    orderPriority: initialData?.orderPriority || 0,
+    imageUrl: initialData?.imageUrl || '',
   });
 
   const [newInteraction, setNewInteraction] = useState('');
+  
+  // Helper function to determine special icon type
+  const getSpecialIconType = (specialIcon: string) => {
+    if (specialIcon === '__HEART_SVG__') return 'heart';
+    if (specialIcon === '__BULLET_SVG__') return 'bullet';
+    if (!specialIcon) return 'two-bullets'; // Empty for two bullets
+    return 'custom';
+  };
+  
+  const [specialIconType, setSpecialIconType] = useState<'heart' | 'bullet' | 'two-bullets' | 'custom'>(
+    getSpecialIconType(formData.specialIcon || '')
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +63,30 @@ export default function ClassEditForm({ initialData, onSave, onCancel, isLoading
 
   const handleInputChange = (field: keyof ClassFormData, value: string | number | boolean | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSpecialIconTypeChange = (type: 'heart' | 'bullet' | 'two-bullets' | 'custom') => {
+    setSpecialIconType(type);
+    
+    // Update specialIcon based on selected type
+    let newSpecialIcon = '';
+    switch (type) {
+      case 'heart':
+        newSpecialIcon = '__HEART_SVG__'; // Special marker for heart SVG
+        break;
+      case 'bullet':
+        newSpecialIcon = '__BULLET_SVG__'; // Special marker for bullet SVG
+        break;
+      case 'two-bullets':
+        newSpecialIcon = ''; // Empty for two bullets
+        break;
+      case 'custom':
+        // Keep existing custom emoji or use default
+        newSpecialIcon = formData.specialIcon && !formData.specialIcon?.startsWith('__') ? formData.specialIcon : '✨';
+        break;
+    }
+    
+    handleInputChange('specialIcon', newSpecialIcon);
   };
 
   const addInteraction = () => {
@@ -108,6 +153,20 @@ export default function ClassEditForm({ initialData, onSave, onCancel, isLoading
               </div>
 
               <div>
+                <Label htmlFor="orderPriority">Ordem de Exibição</Label>
+                <Input
+                  id="orderPriority"
+                  type="number"
+                  min="0"
+                  value={formData.orderPriority}
+                  onChange={(e) => handleInputChange('orderPriority', parseInt(e.target.value) || 0)}
+                  placeholder="0 = primeiro"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
                 <Label htmlFor="maxBullets">Máximo de Balas</Label>
                 <Input
                   id="maxBullets"
@@ -118,6 +177,104 @@ export default function ClassEditForm({ initialData, onSave, onCancel, isLoading
                   onChange={(e) => handleInputChange('maxBullets', parseInt(e.target.value) || 1)}
                 />
               </div>
+
+              <div>
+                <Label htmlFor="heartNumber">Número de Vidas</Label>
+                <Input
+                  id="heartNumber"
+                  type="number"
+                  min="1"
+                  max="5"
+                  value={formData.heartNumber}
+                  onChange={(e) => handleInputChange('heartNumber', parseInt(e.target.value) || 1)}
+                />
+              </div>
+
+              <div>
+                <Label>Ícone da Classe (não exibido)</Label>
+                <EmojiInput
+                  value={formData.classIcon || ''}
+                  onChange={(value) => handleInputChange('classIcon', value)}
+                  placeholder="Digite um emoji para o ícone da classe"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Este ícone não é exibido atualmente, mas pode ser usado no futuro
+                </p>
+              </div>
+              
+              <div>
+                <Label>Ícone Especial (exibido no card)</Label>
+                <RadioGroup
+                  value={specialIconType}
+                  onValueChange={(value) => handleSpecialIconTypeChange(value as 'heart' | 'bullet' | 'two-bullets' | 'custom')}
+                  className="flex flex-wrap gap-4 mt-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="heart" id="heart-form" />
+                    <Label htmlFor="heart-form" className="text-sm flex items-center gap-1">
+                      <Image src="/heart.svg" alt="Heart" width={16} height={16} />
+                      Coração
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="bullet" id="bullet-form" />
+                    <Label htmlFor="bullet-form" className="text-sm flex items-center gap-1">
+                      <Image src="/bullet.svg" alt="Bullet" width={16} height={16} />
+                      Bala
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="two-bullets" id="two-bullets-form" />
+                    <Label htmlFor="two-bullets-form" className="text-sm flex items-center gap-1">
+                      <Image src="/bullet.svg" alt="Bullet" width={16} height={16} />
+                      <Image src="/bullet.svg" alt="Bullet" width={16} height={16} />
+                      Duas Balas
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="custom" id="custom-form" />
+                    <Label htmlFor="custom-form" className="text-sm">
+                      Emoji Personalizado
+                    </Label>
+                  </div>
+                </RadioGroup>
+                
+                {specialIconType === 'custom' && (
+                  <div className="mt-3">
+                    <EmojiInput
+                      value={formData.specialIcon || ''}
+                      onChange={(value) => handleInputChange('specialIcon', value)}
+                      placeholder="Digite um emoji para o ícone especial"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="imageUrl">URL da Imagem (opcional)</Label>
+              <Input
+                id="imageUrl"
+                value={formData.imageUrl}
+                onChange={(e) => handleInputChange('imageUrl', e.target.value)}
+                placeholder="https://exemplo.com/imagem.jpg"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Se preenchido, substituirá a imagem padrão da classe
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="specialText">Texto Especial (exibido no card)</Label>
+              <Input
+                id="specialText"
+                value={formData.specialText}
+                onChange={(e) => handleInputChange('specialText', e.target.value)}
+                placeholder="Ex: Especial"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Texto que aparece na seção especial do card
+              </p>
             </div>
 
             <div className="flex items-center space-x-2">

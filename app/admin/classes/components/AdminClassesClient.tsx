@@ -121,7 +121,7 @@ export default function AdminClassesClient({ classes }: AdminClassesClientProps)
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Criar Nova Classe
-              <Button variant="outline" size="sm" onClick={handleCancel}>
+              <Button variant="outline" size="sm" onClick={() => handleCancel()}>
                 <X className="w-4 h-4" />
               </Button>
             </CardTitle>
@@ -165,6 +165,25 @@ export default function AdminClassesClient({ classes }: AdminClassesClientProps)
                       )}
                       <Badge variant="outline">
                         {classData.maxBullets} bala{classData.maxBullets !== 1 ? 's' : ''}
+                      </Badge>
+                      <Badge variant="outline">
+                        {classData.heartNumber} vida{classData.heartNumber !== 1 ? 's' : ''}
+                      </Badge>
+                      {classData.specialIcon && (
+                        <Badge variant="outline">
+                          {classData.specialIcon === '__HEART_SVG__' ? '❤️' : 
+                           classData.specialIcon === '__BULLET_SVG__' ? '💥' : 
+                           classData.specialIcon === '' ? '🔫🔫' : 
+                           classData.specialIcon}
+                        </Badge>
+                      )}
+                      {classData.specialText && (
+                        <Badge variant="outline">
+                          Texto: {classData.specialText}
+                        </Badge>
+                      )}
+                      <Badge variant="secondary">
+                        Ordem: {classData.orderPriority}
                       </Badge>
                     </div>
                     

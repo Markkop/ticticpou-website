@@ -6,8 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { X, Plus, Save } from 'lucide-react';
+import Image from 'next/image';
+import { EmojiInput } from '@/components/ui/emoji-input';
 import type { Class } from '@/lib/db';
 import type { ClassFormData } from '@/lib/actions/admin-classes';
 
@@ -30,9 +33,27 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
     isBaseClass: classData.isBaseClass || false,
     category: (classData.category as 'base' | 'extra' | 'team') || 'base',
     maxBullets: classData.maxBullets || 1,
+    heartNumber: classData.heartNumber || 1,
+    classIcon: classData.classIcon || '',
+    specialIcon: classData.specialIcon || '',
+    specialText: classData.specialText || '',
+    orderPriority: classData.orderPriority || 0,
+    imageUrl: classData.imageUrl || '',
   });
 
   const [newInteraction, setNewInteraction] = useState('');
+  
+  // Helper function to determine special icon type
+  const getSpecialIconType = (specialIcon: string) => {
+    if (specialIcon === '__HEART_SVG__') return 'heart';
+    if (specialIcon === '__BULLET_SVG__') return 'bullet';
+    if (!specialIcon) return 'two-bullets'; // Empty for two bullets
+    return 'custom';
+  };
+  
+  const [specialIconType, setSpecialIconType] = useState<'heart' | 'bullet' | 'two-bullets' | 'custom'>(
+    getSpecialIconType(formData.specialIcon || '')
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +62,30 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
 
   const handleInputChange = (field: keyof ClassFormData, value: string | number | boolean | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSpecialIconTypeChange = (type: 'heart' | 'bullet' | 'two-bullets' | 'custom') => {
+    setSpecialIconType(type);
+    
+    // Update specialIcon based on selected type
+    let newSpecialIcon = '';
+    switch (type) {
+      case 'heart':
+        newSpecialIcon = '__HEART_SVG__'; // Special marker for heart SVG
+        break;
+      case 'bullet':
+        newSpecialIcon = '__BULLET_SVG__'; // Special marker for bullet SVG
+        break;
+      case 'two-bullets':
+        newSpecialIcon = ''; // Empty for two bullets
+        break;
+      case 'custom':
+        // Keep existing custom emoji or use default
+        newSpecialIcon = formData.specialIcon && !formData.specialIcon?.startsWith('__') ? formData.specialIcon : '✨';
+        break;
+    }
+    
+    handleInputChange('specialIcon', newSpecialIcon);
   };
 
   const addInteraction = () => {
@@ -90,8 +135,8 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
               value={formData.category}
               onValueChange={(value) => handleInputChange('category', value)}
             >
-              <SelectTrigger className={`w-auto h-6 text-xs border-dashed ${getCategoryColor(formData.category)}`}>
-                <SelectValue>{getCategoryLabel(formData.category)}</SelectValue>
+              <SelectTrigger className={`w-auto h-6 text-xs border-dashed ${getCategoryColor(formData.category || null)}`}>
+                <SelectValue>{getCategoryLabel(formData.category || null)}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="base">Base</SelectItem>
@@ -120,6 +165,40 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
               />
               <span className="text-xs">bala{formData.maxBullets !== 1 ? 's' : ''}</span>
             </div>
+            
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min="1"
+                max="5"
+                value={formData.heartNumber}
+                onChange={(e) => handleInputChange('heartNumber', parseInt(e.target.value) || 1)}
+                className="w-12 h-6 text-xs text-center border-dashed border-red-300"
+              />
+              <span className="text-xs">vida{formData.heartNumber !== 1 ? 's' : ''}</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min="0"
+                value={formData.orderPriority}
+                onChange={(e) => handleInputChange('orderPriority', parseInt(e.target.value) || 0)}
+                className="w-12 h-6 text-xs text-center border-dashed border-blue-300"
+                placeholder="0"
+              />
+              <span className="text-xs">ordem</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Input
+                value={formData.specialText}
+                onChange={(e) => handleInputChange('specialText', e.target.value)}
+                className="w-20 h-6 text-xs text-center border-dashed border-purple-300"
+                placeholder="Especial"
+              />
+              <span className="text-xs">texto</span>
+            </div>
           </div>
           
           {/* Description */}
@@ -130,6 +209,71 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
             rows={2}
             required
           />
+          
+          {/* Image URL */}
+          <div className="mb-3">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-medium text-xs">URL da Imagem:</span>
+            </div>
+            <Input
+              value={formData.imageUrl}
+              onChange={(e) => handleInputChange('imageUrl', e.target.value)}
+              className="text-xs border-dashed border-purple-300 bg-purple-50/30 focus:bg-white"
+              placeholder="https://exemplo.com/imagem.jpg (opcional)"
+            />
+          </div>
+
+          {/* Icon Selection */}
+          <div className="mb-3">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-medium text-xs">Ícone Especial:</span>
+            </div>
+            <RadioGroup
+              value={specialIconType}
+              onValueChange={(value) => handleSpecialIconTypeChange(value as 'heart' | 'bullet' | 'two-bullets' | 'custom')}
+              className="flex flex-wrap gap-3"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="heart" id="heart" />
+                <Label htmlFor="heart" className="text-xs flex items-center gap-1">
+                  <Image src="/heart.svg" alt="Heart" width={12} height={12} />
+                  Coração
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="bullet" id="bullet" />
+                <Label htmlFor="bullet" className="text-xs flex items-center gap-1">
+                  <Image src="/bullet.svg" alt="Bullet" width={12} height={12} />
+                  Bala
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="two-bullets" id="two-bullets" />
+                <Label htmlFor="two-bullets" className="text-xs flex items-center gap-1">
+                  <Image src="/bullet.svg" alt="Bullet" width={12} height={12} />
+                  <Image src="/bullet.svg" alt="Bullet" width={12} height={12} />
+                  Duas Balas
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="custom" id="custom" />
+                <Label htmlFor="custom" className="text-xs">
+                  Emoji
+                </Label>
+              </div>
+            </RadioGroup>
+            
+            {specialIconType === 'custom' && (
+              <div className="mt-2">
+                <EmojiInput
+                  value={formData.specialIcon || ''}
+                  onChange={(value) => handleInputChange('specialIcon', value)}
+                  className="text-sm border-dashed border-yellow-300 bg-yellow-50/30 focus:bg-white"
+                  placeholder="Digite um emoji"
+                />
+              </div>
+            )}
+          </div>
           
           {/* Sounds and Gestures - inline style */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm mb-3">

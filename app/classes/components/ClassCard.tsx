@@ -16,40 +16,37 @@ interface ClassCardProps {
 export default function ClassCard({ classData, hideTitle }: ClassCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   
-  const getSpecialEmoji = () => {
-    switch (classData.name) {
-      case 'Mago':
-        return { emoji: '💥', text: 'Explosão', useBulletSvgs: false };
-      case 'Samurai':
-        return { emoji: '⚔️', text: 'Contra-ataque', useBulletSvgs: false };
-      case 'Padre':
-        return { emoji: '✝️', text: 'Vida Extra', useBulletSvgs: false };
-      case 'Cangaceiro':
-        return { emoji: '', text: 'Duas Balas', useBulletSvgs: true };
-      case 'Novico':
-        return { emoji: '☕', text: 'Café com leite', useBulletSvgs: false };
-      case 'Assassino':
-        return { emoji: '🗡️', text: 'Apunhalar', useBulletSvgs: false };
-      case 'Ladrao':
-        return { emoji: '🎭', text: 'Roubar', useBulletSvgs: false };
-      case 'Kabalista':
-        return { emoji: '⏱️', text: 'Contagem', useBulletSvgs: false };
-      case 'Metamorfo':
-        return { emoji: '🧪', text: 'Transformar', useBulletSvgs: false };
-      case 'Pacificador':
-        return { emoji: '✋', text: 'Cancelar', useBulletSvgs: false };
-      case 'Paramedico':
-        return { emoji: '⚡', text: 'Reviver', useBulletSvgs: false };
-      default:
-        return { emoji: '✨', text: 'Especial', useBulletSvgs: false };
+  const getSpecialInfo = () => {
+    const specialIcon = classData.specialIcon;
+    
+    // Handle SVG markers from database
+    if (specialIcon === '__HEART_SVG__') {
+      return { useHeartSvg: true, useBulletSvg: false, useTwoBulletSvgs: false, emoji: null };
     }
+    if (specialIcon === '__BULLET_SVG__') {
+      return { useHeartSvg: false, useBulletSvg: true, useTwoBulletSvgs: false, emoji: null };
+    }
+    
+    // Handle empty string for two bullets (Cangaceiro style)
+    if (specialIcon === '' && classData.maxBullets && classData.maxBullets > 1) {
+      return { useHeartSvg: false, useBulletSvg: false, useTwoBulletSvgs: true, emoji: null };
+    }
+    
+    // Custom emoji
+    return { useHeartSvg: false, useBulletSvg: false, useTwoBulletSvgs: false, emoji: specialIcon };
   };
 
   const getClassImage = () => {
+    // Use database imageUrl if available, otherwise fallback to hardcoded values
+    if (classData.imageUrl) {
+      return classData.imageUrl;
+    }
+    
+    // Fallback to hardcoded values for backward compatibility
     switch (classData.name) {
       case 'Mago':
         return '/classes-img/mago.jpg';
-      case 'Samurai':
+      case 'Espadachim':
         return '/classes-img/espada.jpg';
       case 'Padre':
         return '/classes-img/padre.jpg';
@@ -73,10 +70,10 @@ export default function ClassCard({ classData, hideTitle }: ClassCardProps) {
     }
   };
   
-  const specialInfo = getSpecialEmoji();
+  const specialInfo = getSpecialInfo();
   const classImage = getClassImage();
   const shouldHideTitle = hideTitle !== undefined ? hideTitle : !!classImage;
-  const maxLives = classData.name === 'Padre' ? 2 : 1;
+  const maxLives = classData.heartNumber || 1;
   const currentLives = 1;
   const maxBullets = classData.maxBullets || 0;
   const currentBullets = 0;
@@ -143,15 +140,21 @@ export default function ClassCard({ classData, hideTitle }: ClassCardProps) {
             
             {/* Special Section */}
             <div className="p-3 flex items-center justify-center gap-2">
-              {specialInfo.useBulletSvgs ? (
+              {specialInfo.useHeartSvg ? (
+                <Image src="/heart.svg" alt="Coração" width={16} height={16} />
+              ) : specialInfo.useBulletSvg ? (
+                <Image src="/bullet.svg" alt="Bala" width={16} height={16} />
+              ) : specialInfo.useTwoBulletSvgs ? (
                 <div className="flex gap-0">
-                  <Image src="/bullet.svg" alt="Bala" width={16} height={16} className="" />
-                  <Image src="/bullet.svg" alt="Bala" width={16} height={16} className="" />
+                  <Image src="/bullet.svg" alt="Bala" width={16} height={16} />
+                  <Image src="/bullet.svg" alt="Bala" width={16} height={16} />
                 </div>
-              ) : (
+              ) : specialInfo.emoji ? (
                 <span className="text-lg">{specialInfo.emoji}</span>
+              ) : (
+                <span className="text-xs text-muted-foreground">Sem ícone</span>
               )}
-              <span className="text-xs font-medium">{specialInfo.text}</span>
+              <span className="text-xs font-medium">{classData.specialText || 'Especial'}</span>
             </div>
           </div>
 

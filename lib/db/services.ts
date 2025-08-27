@@ -1,21 +1,21 @@
 import { db } from './index';
 import { classes, actions, gameModes, users, matches, matchParticipants } from './schema';
-import { eq, desc, sql, count, avg, sum } from 'drizzle-orm';
+import { eq, desc, sql, count, avg, sum, asc } from 'drizzle-orm';
 import type { Class, Action, GameMode } from './index';
 import type { User, CreateUserData, UpdateUserData } from '@/lib/types/user';
 
 // Classes service
 export const classesService = {
   async getAll(): Promise<Class[]> {
-    return await db.select().from(classes).orderBy(classes.category, classes.name);
+    return await db.select().from(classes).orderBy(asc(classes.orderPriority), classes.category, classes.name);
   },
 
   async getByCategory(category: 'base' | 'extra' | 'team'): Promise<Class[]> {
-    return await db.select().from(classes).where(eq(classes.category, category));
+    return await db.select().from(classes).where(eq(classes.category, category)).orderBy(asc(classes.orderPriority), classes.name);
   },
 
   async getBaseClasses(): Promise<Class[]> {
-    return await db.select().from(classes).where(eq(classes.isBaseClass, true));
+    return await db.select().from(classes).where(eq(classes.isBaseClass, true)).orderBy(asc(classes.orderPriority), classes.name);
   },
 
   async getByName(name: string): Promise<Class | undefined> {
