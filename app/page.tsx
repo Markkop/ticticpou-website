@@ -72,7 +72,7 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-foreground mb-8">Tic Tic Pou 3D</h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
   Protótipo de 2018 com uma ideia do que seria uma versão online do jogo. Código disponível no <a href="https://github.com/Markkop/TicTicPouTry3" className="text-primary">GitHub</a>.           </p>
-            <div className="scale-75 md:scale-50 origin-top flex justify-center">
+            <div className="md:scale-50 origin-top flex justify-center">
               <iframe
                 frameBorder="0"
                 src="https://itch.io/embed-upload/1200940?color=333333"
@@ -84,6 +84,7 @@ export default function Home() {
                 <a href="https://mark17.itch.io/ticticpou-3d">Play TicTicPou 3D on itch.io</a>
               </iframe>
             </div>
+              <p className="text-sm text-muted-foreground md:hidden">On mobile, expand clicking here and adjust your phone orientation ☝️</p>
           </div>
         </section>
       </main>
