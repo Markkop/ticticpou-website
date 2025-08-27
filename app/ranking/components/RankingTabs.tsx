@@ -35,19 +35,15 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
             displayName: entry.displayName,
             avatarUrl: entry.avatarUrl,
             elo: entry.elo,
-            wins: entry.wins,
-            losses: entry.losses,
+            totalMatches: entry.totalMatches,
           }}
           rank={entry.rank}
           showStats
           showElo
           showRank
           compact
-        >
-          <div className="text-xs text-muted-foreground text-right">
-            {entry.avgEliminations.toFixed(1)} elim/partida
-          </div>
-        </UserCard>
+          className="mb-2"
+        />
       ))}
     </div>
   );

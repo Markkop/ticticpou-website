@@ -14,6 +14,7 @@ interface UserCardProps {
     elo?: number;
     wins?: number;
     losses?: number;
+    totalMatches?: number;
     isAmbassador?: boolean;
   };
   rank?: number;
@@ -79,12 +80,9 @@ export function UserCard({
                       <Crown className="h-3 w-3 text-primary flex-shrink-0" />
                     )}
                   </div>
-                  {showStats && user.wins !== undefined && user.losses !== undefined && (
+                  {showStats && user.totalMatches !== undefined && (
                     <div className="text-xs text-muted-foreground">
-                      {user.wins}V/{user.losses}D
-                      {user.wins + user.losses > 0 && (
-                        <span> • {((user.wins / (user.wins + user.losses)) * 100).toFixed(0)}%</span>
-                      )}
+                      {user.totalMatches} partidas
                     </div>
                   )}
                 </div>
@@ -134,12 +132,9 @@ export function UserCard({
                   <Crown className={cn('text-primary', compact ? 'h-3 w-3' : 'h-4 w-4')} />
                 )}
               </div>
-              {showStats && user.wins !== undefined && user.losses !== undefined && (
+              {showStats && user.totalMatches !== undefined && (
                 <div className={cn('text-muted-foreground', compact ? 'text-xs' : 'text-sm')}>
-                  {user.wins}V / {user.losses}D
-                  {user.wins + user.losses > 0 && (
-                    <span> • {((user.wins / (user.wins + user.losses)) * 100).toFixed(1)}% WR</span>
-                  )}
+                  {user.totalMatches} partidas
                 </div>
               )}
             </div>

@@ -100,7 +100,6 @@ export default async function RankingPage() {
                 <li>• Todos começam com 1000 pontos</li>
                 <li>• Ganha pontos ao vencer partidas oficiais</li>
                 <li>• Perde pontos ao ser derrotado</li>
-                <li>• Bônus de +3 pontos por eliminação</li>
                 <li>• Variação baseada na diferença de ELO dos oponentes</li>
               </ul>
             </div>
@@ -151,7 +150,6 @@ export default async function RankingPage() {
               <p className="text-sm text-muted-foreground">
                 O ranking global considera o desempenho em todos os modos de jogo, 
                 calculando uma média ponderada baseada no número de partidas em cada modo.
-                Eliminar oponentes concede bônus de ELO adicionais.
               </p>
             </div>
           </div>
