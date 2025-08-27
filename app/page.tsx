@@ -12,8 +12,7 @@ export default function Home() {
               <span className="text-primary block text-3xl md:text-4xl mt-2">com Classes</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              O jogo de roda brasileiro que conquistou uma nova dimensão com classes únicas, 
-              sistema de ranking ELO e partidas oficiais registradas por embaixadores.
+              Jogo de roda brasileiro com diversas classes, modos de jogo, ranking e experimentações.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
@@ -28,45 +27,6 @@ export default function Home() {
               >
                 Cadastrar-se
               </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="container mx-auto px-4 py-20">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-primary/10 p-6 rounded-lg mb-4 inline-block">
-                <div className="w-12 h-12 bg-primary rounded-md flex items-center justify-center text-primary-foreground font-bold text-xl">
-                  🎯
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Classes Únicas</h3>
-              <p className="text-muted-foreground">
-                Mais de 10 classes diferentes, cada uma com habilidades especiais que transformam a experiência do jogo tradicional.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primary/10 p-6 rounded-lg mb-4 inline-block">
-                <div className="w-12 h-12 bg-primary rounded-md flex items-center justify-center text-primary-foreground font-bold text-xl">
-                  🏆
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Ranking ELO</h3>
-              <p className="text-muted-foreground">
-                Sistema de pontuação profissional que acompanha seu desempenho ao longo do tempo nas partidas oficiais.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primary/10 p-6 rounded-lg mb-4 inline-block">
-                <div className="w-12 h-12 bg-primary rounded-md flex items-center justify-center text-primary-foreground font-bold text-xl">
-                  📊
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Partidas Oficiais</h3>
-              <p className="text-muted-foreground">
-                Registre suas partidas com embaixadores oficiais e acompanhe o histórico completo de jogos da comunidade.
-              </p>
             </div>
           </div>
         </section>
@@ -105,27 +65,28 @@ export default function Home() {
             </div>
           </div>
         </section>
-      </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-12">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-muted-foreground mb-4">
-            Tic Tic Pou com Classes - Jogo criado colaborativamente pela comunidade brasileira
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Este trabalho está licenciado com uma{" "}
-            <a 
-              href="http://creativecommons.org/licenses/by-nc-sa/4.0/" 
-              className="text-primary hover:text-primary/80"
-              target="_blank" 
-              rel="noopener noreferrer"
-            >
-              Licença Creative Commons - Atribuição-NãoComercial-CompartilhaIgual 4.0 Internacional
-            </a>
-          </p>
-        </div>
-      </footer>
+        {/* 3D Game Prototype Section */}
+        <section className="container mx-auto px-4 py-20 text-center">
+          <div className="max-w-2lg mx-auto">
+            <h2 className="text-3xl font-bold text-foreground mb-8">Tic Tic Pou 3D</h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+  Protótipo de 2018 com uma ideia do que seria uma versão online do jogo. Código disponível no <a href="https://github.com/Markkop/TicTicPouTry3" className="text-primary">GitHub</a>.           </p>
+            <div className="scale-75 md:scale-50 origin-top flex justify-center">
+              <iframe
+                frameBorder="0"
+                src="https://itch.io/embed-upload/1200940?color=333333"
+                allowFullScreen
+                width="980"
+                height="688"
+                className="rounded-lg shadow-lg "
+              >
+                <a href="https://mark17.itch.io/ticticpou-3d">Play TicTicPou 3D on itch.io</a>
+              </iframe>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
