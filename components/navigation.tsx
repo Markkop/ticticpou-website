@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
-import { useUser, User } from "@stackframe/stack";
+import { User } from "@stackframe/stack";
+import { useUserProfile } from "@/lib/hooks";
 
 import {
   NavigationMenu,
@@ -40,7 +42,7 @@ const links: NavLink[] = [
 
 export function Navigation() {
   const pathname = usePathname();
-  const user = useUser();
+  const { profile, stackUser: user } = useUserProfile();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -58,8 +60,20 @@ export function Navigation() {
           {/* Right side actions */}
           <div className="flex items-center gap-2">
             {user ? (
-              <Link href="/profile" className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium hover:bg-primary/90 transition-colors">
-                {user.displayName?.charAt(0).toUpperCase() || user.primaryEmail?.charAt(0).toUpperCase() || 'U'}
+              <Link href="/profile" className="flex items-center justify-center">
+                {profile?.avatarUrl ? (
+                  <Image 
+                    src={profile.avatarUrl} 
+                    alt={profile.displayName || 'User avatar'}
+                    width={32}
+                    height={32}
+                    className="w-8 h-8 rounded-full object-cover hover:opacity-90 transition-opacity"
+                  />
+                ) : (
+                  <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium hover:bg-primary/90 transition-colors">
+                    {profile?.displayName?.charAt(0).toUpperCase() || user.displayName?.charAt(0).toUpperCase() || user.primaryEmail?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                )}
               </Link>
             ) : (
               <Link href="/auth/signin" className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
@@ -71,7 +85,7 @@ export function Navigation() {
 
         {/* Mobile hamburger */}
         <div className="ml-auto flex items-center md:hidden">
-          <MobileNav pathname={pathname} user={user} />
+          <MobileNav pathname={pathname} user={user} profile={profile} />
         </div>
       </div>
     </header>
@@ -107,7 +121,7 @@ function DesktopNav({ pathname }: { pathname: string | null }) {
   );
 }
 
-function MobileNav({ pathname, user }: { pathname: string | null; user: User | null }) {
+function MobileNav({ pathname, user, profile }: { pathname: string | null; user: User | null; profile: { displayName: string; avatarUrl: string | null; publicId: string } | null }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -144,9 +158,19 @@ function MobileNav({ pathname, user }: { pathname: string | null; user: User | n
               href="/profile"
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
             >
-              <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium">
-                {user.displayName?.charAt(0).toUpperCase() || user.primaryEmail?.charAt(0).toUpperCase() || 'U'}
-              </div>
+              {profile?.avatarUrl ? (
+                <Image 
+                  src={profile.avatarUrl} 
+                  alt={profile.displayName || 'User avatar'}
+                  width={24}
+                  height={24}
+                  className="w-6 h-6 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium">
+                  {profile?.displayName?.charAt(0).toUpperCase() || user.displayName?.charAt(0).toUpperCase() || user.primaryEmail?.charAt(0).toUpperCase() || 'U'}
+                </div>
+              )}
               Perfil
             </Link>
           ) : (

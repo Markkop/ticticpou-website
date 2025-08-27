@@ -84,7 +84,7 @@ export default function Home() {
                 <a href="https://mark17.itch.io/ticticpou-3d">Play TicTicPou 3D on itch.io</a>
               </iframe>
             </div>
-              <p className="text-xs text-muted-foreground md:hidden">On mobile, expand clicking here and adjust your phone orientation ☝️</p>
+              <p className="text-xs text-muted-foreground md:hidden">On mobile, expand and adjust your phone orientation</p>
           </div>
         </section>
       </main>
