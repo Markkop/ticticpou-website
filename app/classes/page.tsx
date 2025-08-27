@@ -15,7 +15,7 @@ function ClassesPageComponent({ classes }: ClassesPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto max-w-[1000px] px-4 py-8">
         {/* Back Button */}
         <Link 
           href="/" 
@@ -70,9 +70,6 @@ function ClassesPageComponent({ classes }: ClassesPageProps) {
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-3">
               Classes de Equipe
-              <span className="bg-secondary/20 text-secondary-foreground px-2 py-1 rounded-full text-sm font-medium">
-                {teamClasses.length}
-              </span>
             </h2>
             <p className="text-muted-foreground mb-8">
               Classes específicas para o modo Em Equipe, focadas em suporte e colaboração entre aliados.
