@@ -1,10 +1,20 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  // Allow external avatar images served by Google
+  // Allow any image source (disable domain restrictions)
   images: {
-    domains: ["lh3.googleusercontent.com", "avatars.githubusercontent.com", "i.imgur.com"],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+      {
+        protocol: 'http',
+        hostname: '**',
+      },
+    ],
+    // Optionally, you can remove the 'domains' array entirely
+    // domains: [],
   },
 };
 
