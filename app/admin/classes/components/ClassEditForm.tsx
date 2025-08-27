@@ -33,7 +33,7 @@ export default function ClassEditForm({ initialData, onSave, onCancel, isLoading
     interactions: initialData?.interactions || [],
     isBaseClass: initialData?.isBaseClass || false,
     category: (initialData?.category as 'base' | 'extra' | 'team') || 'base',
-    maxBullets: initialData?.maxBullets || 1,
+    maxBullets: initialData?.maxBullets ?? 1,
     heartNumber: initialData?.heartNumber || 1,
     classIcon: initialData?.classIcon || '',
     specialIcon: initialData?.specialIcon ?? '',
@@ -160,7 +160,10 @@ export default function ClassEditForm({ initialData, onSave, onCancel, isLoading
                   type="number"
                   min="0"
                   value={formData.orderPriority}
-                  onChange={(e) => handleInputChange('orderPriority', parseInt(e.target.value) || 0)}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
+                    handleInputChange('orderPriority', isNaN(value) ? 0 : value);
+                  }}
                   placeholder="0 = primeiro"
                 />
               </div>
@@ -175,7 +178,10 @@ export default function ClassEditForm({ initialData, onSave, onCancel, isLoading
                   min="0"
                   max="10"
                   value={formData.maxBullets}
-                  onChange={(e) => handleInputChange('maxBullets', parseInt(e.target.value) || 1)}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
+                    handleInputChange('maxBullets', isNaN(value) ? 0 : value);
+                  }}
                 />
               </div>
 
@@ -187,7 +193,10 @@ export default function ClassEditForm({ initialData, onSave, onCancel, isLoading
                   min="1"
                   max="5"
                   value={formData.heartNumber}
-                  onChange={(e) => handleInputChange('heartNumber', parseInt(e.target.value) || 1)}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
+                    handleInputChange('heartNumber', isNaN(value) ? 1 : value);
+                  }}
                 />
               </div>
 

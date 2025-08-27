@@ -32,7 +32,7 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
     interactions: classData.interactions || [],
     isBaseClass: classData.isBaseClass || false,
     category: (classData.category as 'base' | 'extra' | 'team') || 'base',
-    maxBullets: classData.maxBullets || 1,
+    maxBullets: classData.maxBullets ?? 1,
     heartNumber: classData.heartNumber || 1,
     classIcon: classData.classIcon || '',
     specialIcon: classData.specialIcon ?? '',
@@ -161,7 +161,10 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
                 min="0"
                 max="10"
                 value={formData.maxBullets}
-                onChange={(e) => handleInputChange('maxBullets', parseInt(e.target.value) || 1)}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  handleInputChange('maxBullets', isNaN(value) ? 0 : value);
+                }}
                 className="w-12 h-6 text-xs text-center border-dashed border-gray-300"
               />
               <span className="text-xs">bala{formData.maxBullets !== 1 ? 's' : ''}</span>
@@ -173,7 +176,10 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
                 min="1"
                 max="5"
                 value={formData.heartNumber}
-                onChange={(e) => handleInputChange('heartNumber', parseInt(e.target.value) || 1)}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  handleInputChange('heartNumber', isNaN(value) ? 1 : value);
+                }}
                 className="w-12 h-6 text-xs text-center border-dashed border-red-300"
               />
               <span className="text-xs">vida{formData.heartNumber !== 1 ? 's' : ''}</span>
@@ -184,7 +190,10 @@ export default function InlineClassEdit({ classData, onSave, onCancel, isLoading
                 type="number"
                 min="0"
                 value={formData.orderPriority}
-                onChange={(e) => handleInputChange('orderPriority', parseInt(e.target.value) || 0)}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  handleInputChange('orderPriority', isNaN(value) ? 0 : value);
+                }}
                 className="w-12 h-6 text-xs text-center border-dashed border-blue-300"
                 placeholder="0"
               />

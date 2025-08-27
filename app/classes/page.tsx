@@ -29,9 +29,8 @@ function ClassesPageComponent({ classes }: ClassesPageProps) {
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-foreground mb-4">Classes do Tic Tic Pou</h1>
           <p className="text-lg text-muted-foreground max-w-3xl">
-            Conheça todas as classes disponíveis no jogo. Cada classe possui habilidades especiais únicas 
-            que transformam a experiência do jogo tradicional. Clique em &quot;Ver Detalhes&quot; para conhecer 
-            as interações específicas de cada classe.
+            O jogo base é composto por 4 classes: Mago, Espadachim, Padre e Cangaceiro. Novos jogadores podem começar excepcionalmente com o Noviço e conforme o 
+            jogo é explicado, novas classes são introduzidas como o Assassino, Kabalista, Ladrão e Pacificador.
           </p>
         </div>
 
@@ -39,12 +38,9 @@ function ClassesPageComponent({ classes }: ClassesPageProps) {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-3">
             Classes Base
-            <span className="bg-primary/20 text-primary px-2 py-1 rounded-full text-sm font-medium">
-              {baseClasses.length}
-            </span>
           </h2>
           <p className="text-muted-foreground mb-8">
-            As quatro classes fundamentais do jogo. É necessário ter no mínimo um jogador de cada classe base em uma partida.
+            Idealmente, toda partida precisa ter pelo menos um jogador de cada classe base.
           </p>
           <div className="grid md:grid-cols-2 gap-6">
             {baseClasses.map((classData) => (
@@ -57,13 +53,10 @@ function ClassesPageComponent({ classes }: ClassesPageProps) {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-3">
             Classes Extra
-            <span className="bg-accent/20 text-accent-foreground px-2 py-1 rounded-full text-sm font-medium">
-              {extraClasses.length}
-            </span>
           </h2>
           <p className="text-muted-foreground mb-8">
             Classes complementares que devem ser adicionadas após os jogadores dominarem as classes base. 
-            Recomenda-se começar pelo Assassino e Finalizador.
+            O Assassino ajuda em partidas com muitas defesas e o Kabalista tem uma dinâmica diferente.
           </p>
           <div className="grid md:grid-cols-2 gap-6">
             {extraClasses.map((classData) => (
@@ -92,28 +85,7 @@ function ClassesPageComponent({ classes }: ClassesPageProps) {
           </section>
         )}
 
-        {/* Tips */}
-        <section className="bg-card border border-border rounded-lg p-6 shadow-sm">
-          <h3 className="text-xl font-semibold text-card-foreground mb-4">💡 Dicas para Iniciantes</h3>
-          <ul className="space-y-2 text-muted-foreground">
-            <li className="flex items-start gap-2">
-              <span className="text-primary mt-1">•</span>
-              <span>Comece aprendendo apenas as 4 classes base antes de adicionar outras</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-primary mt-1">•</span>
-              <span>O Noviço é recomendado para jogadores completamente iniciantes</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-primary mt-1">•</span>
-              <span>Adicione o Assassino e Finalizador após dominar as classes base</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-primary mt-1">•</span>
-              <span>Classes de Equipe são exclusivas para partidas 3x3 ou maiores</span>
-            </li>
-          </ul>
-        </section>
+
       </main>
     </div>
   );
