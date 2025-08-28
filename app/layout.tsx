@@ -49,12 +49,21 @@ export const metadata: Metadata = {
     siteName: "Tic Tic Pou",
     locale: "pt_BR",
     type: "website",
+    images: [
+      {
+        url: "/og-image2.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Tic Tic Pou - O Jogo de Roda com Classes",
+      }
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Tic Tic Pou - O Jogo de Roda com Classes",
     description: "Jogo de roda com sistema de classes, modos de jogo e ranking.",
     creator: "@ticticpou",
+    images: ["/og-image2.jpg"],
   },
   robots: {
     index: true,
