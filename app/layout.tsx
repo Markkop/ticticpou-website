@@ -38,14 +38,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://ttp.markkop.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://ttp.markkop.dev"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "Tic Tic Pou - O Jogo de Roda com Classes",
     description: "Jogo de roda com sistema de classes, modos de jogo e ranking.",
-    url: "https://ttp.markkop.com",
+    url: "https://ttp.markkop.dev",
     siteName: "Tic Tic Pou",
     locale: "pt_BR",
     type: "website",
