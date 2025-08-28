@@ -1,0 +1,39 @@
+{
+  "name": "Tic Tic Pou - O Jogo de Roda Brasileiro com Classes",
+  "short_name": "Tic Tic Pou",
+  "description": "Jogo de roda brasileiro com sistema de classes únicas, ranking ELO oficial e partidas supervisionadas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ea580c",
+  "orientation": "portrait-primary",
+  "categories": ["games", "entertainment"],
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/bullet.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/heart.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/ttpdemo1.png",
+      "sizes": "660x756",
+      "type": "image/png",
+      "label": "Tic Tic Pou Gameplay"
+    }
+  ],
+  "related_applications": [],
+  "scope": "/",
+  "id": "tic-tic-pou-v1"
+}

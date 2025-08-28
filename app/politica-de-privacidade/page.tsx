@@ -1,8 +1,15 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Política de Privacidade / Privacy Policy – Tic Tic Pou",
-  description: "Como coletamos, usamos e protegemos seus dados ao usar o site Tic Tic Pou.",
+  title: "Política de Privacidade",
+  description: "Como coletamos, usamos e protegemos seus dados ao usar o site Tic Tic Pou. Política de privacidade completa e transparente.",
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: '/politica-de-privacidade',
+  },
 };
 
 export default function PrivacyPolicyPage() {

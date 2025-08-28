@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Github, Twitter, Linkedin } from "lucide-react";
 
 // Links grouped by sections
 const recursosLinks = [

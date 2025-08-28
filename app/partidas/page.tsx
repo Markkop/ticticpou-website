@@ -101,8 +101,18 @@ export async function generateStaticParams() {
 
 export async function generateMetadata() {
   return {
-    title: 'Partidas Oficiais - Tic Tic Pou',
-    description: 'Histórico completo de partidas registradas por embaixadores'
+    title: 'Partidas Oficiais',
+    description: 'Histórico completo de partidas oficiais do Tic Tic Pou registradas por embaixadores. Veja resultados, participantes e mudanças de ELO em tempo real.',
+    keywords: 'partidas tic tic pou, histórico partidas, resultados oficiais, embaixadores, elo mudanças',
+    openGraph: {
+      title: 'Partidas Oficiais - Tic Tic Pou',
+      description: 'Acompanhe todas as partidas oficiais registradas com detalhes de participantes e mudanças de ELO.',
+      type: 'website',
+      url: '/partidas',
+    },
+    alternates: {
+      canonical: '/partidas',
+    },
   };
 }
 

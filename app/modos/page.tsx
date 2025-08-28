@@ -69,8 +69,18 @@ export async function generateStaticParams() {
 
 export async function generateMetadata() {
   return {
-    title: 'Modos de Jogo - Tic Tic Pou',
-    description: 'Descubra todas as formas de jogar Tic Tic Pou com Classes'
+    title: 'Modos de Jogo',
+    description: 'Explore todos os modos de jogo do Tic Tic Pou: Clássico, Normal, Livre, Em Equipe e mais. Cada modo oferece estratégias únicas e desafios diferentes.',
+    keywords: 'modos de jogo tic tic pou, modo clássico, modo normal, modo livre, modo equipe, regras tic tic pou',
+    openGraph: {
+      title: 'Modos de Jogo - Tic Tic Pou',
+      description: 'Descubra todas as formas de jogar Tic Tic Pou com Classes. Do modo clássico até variantes competitivas e de equipe.',
+      type: 'website',
+      url: '/modos',
+    },
+    alternates: {
+      canonical: '/modos',
+    },
   };
 }
 

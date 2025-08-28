@@ -1,0 +1,36 @@
+# Tic Tic Pou
+
+> Official site for Tic Tic Pou — a class-based circle game. This llms.txt provides LLM-friendly pointers to core pages, policies, and related resources for retrieval at inference time.
+
+Content is intended for retrieval usage by assistants and agents. Please provide attribution when quoting or summarizing. Content is shared under the CC BY-NC-SA 4.0 license.
+
+## Core pages
+
+- [Home](/): Site overview and navigation
+- [Rules](/rules): Game rules and explanations
+- [Classes](/classes): Class descriptions and abilities
+- [Game modes](/modos): Available modes and how they work
+- [Ranking](/ranking): Leaderboards and standings
+- [Matches](/partidas): Match list and editor
+- [Privacy policy](/politica-de-privacidade): Data usage and your rights
+
+## Policies & meta
+
+- [Robots.txt](/robots.txt): Crawling and indexing rules
+- [Sitemap](/sitemap.xml): Indexable pages for discovery
+- [llms.txt](/llms.txt): This curated index for LLMs
+- [License (CC BY-NC-SA 4.0)](http://creativecommons.org/licenses/by-nc-sa/4.0/): Terms of use and sharing
+
+## Repositories
+
+- [Main project (TicTicPou)](https://github.com/Markkop/TicTicPou): Game source code
+- [Website (ticticpou-website)](https://github.com/Markkop/ticticpou-website): This website source
+- [Jogos Lúdicos](https://github.com/Markkop/JogosLudicos): Related learning and games
+
+## Optional
+
+- [Itch.io page](https://mark17.itch.io/ticticpou-3d): Playable demo and downloads
+
+Contact: [me@markkop.dev](mailto:me@markkop.dev)
+
+Last updated: 2025-08-28

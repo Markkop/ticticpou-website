@@ -161,7 +161,17 @@ export default async function RankingPage() {
 
 export async function generateMetadata() {
   return {
-    title: 'Ranking ELO - Tic Tic Pou',
-    description: 'Rankings oficiais baseados em partidas registradas por embaixadores'
+    title: 'Ranking ELO',
+    description: 'Rankings oficiais do Tic Tic Pou com sistema ELO. Veja os melhores jogadores em cada modo: Clássico, Normal e Livre. Rankings atualizados em tempo real.',
+    keywords: 'ranking tic tic pou, elo tic tic pou, melhores jogadores, ranking oficial, sistema elo, competitivo',
+    openGraph: {
+      title: 'Ranking ELO - Tic Tic Pou',
+      description: 'Confira os rankings oficiais e veja os melhores jogadores de Tic Tic Pou em cada modo de jogo.',
+      type: 'website',
+      url: '/ranking',
+    },
+    alternates: {
+      canonical: '/ranking',
+    },
   };
 }

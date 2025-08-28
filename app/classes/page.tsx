@@ -94,8 +94,18 @@ export async function generateStaticParams() {
 
 export async function generateMetadata() {
   return {
-    title: 'Classes do Tic Tic Pou',
-    description: 'Conheça todas as classes disponíveis no jogo Tic Tic Pou'
+    title: 'Classes',
+    description: 'Explore as classes do Tic Tic Pou: Mago, Espadachim, Padre, Cangaceiro e mais. Cada classe possui habilidades únicas e estratégias especiais.',
+    keywords: 'classes tic tic pou, personagens tic tic pou, mago, espadachim, padre, cangaceiro, assassino, kabalista',
+    openGraph: {
+      title: 'Classes do Tic Tic Pou',
+      description: 'Conheça todas as classes com habilidades únicas: Mago, Espadachim, Padre, Cangaceiro e mais.',
+      type: 'website',
+      url: '/classes',
+    },
+    alternates: {
+      canonical: '/classes',
+    },
   };
 }
 

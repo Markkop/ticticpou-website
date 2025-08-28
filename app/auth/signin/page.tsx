@@ -1,6 +1,19 @@
 import Link from 'next/link';
 import { SignIn } from '@stackframe/stack';
 import { ArrowLeft } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Entrar',
+  description: 'Entre na sua conta Tic Tic Pou para acessar o ranking oficial e registrar suas partidas.',
+  robots: {
+    index: false,
+    follow: true,
+  },
+  alternates: {
+    canonical: '/auth/signin',
+  },
+};
 
 export default function SignInPage() {
   return (

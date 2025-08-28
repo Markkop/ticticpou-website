@@ -1,6 +1,19 @@
 import Link from 'next/link';
 import { SignUp } from '@stackframe/stack';
 import { ArrowLeft } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Criar Conta',
+  description: 'Crie sua conta no Tic Tic Pou e participe do ranking oficial, registre partidas e acompanhe suas estatísticas.',
+  robots: {
+    index: false,
+    follow: true,
+  },
+  alternates: {
+    canonical: '/auth/signup',
+  },
+};
 
 export default function SignUpPage() {
   return (
